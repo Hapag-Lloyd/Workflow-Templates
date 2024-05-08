@@ -25,6 +25,15 @@ jobs:
         with:
           ref: release-dry-run
 
+      - name: Setup release
+        run: |
+          pwd
+          # using stable here to be able to quickly switch to a working version in case the current stable is broken 
+          git clone --no-tags --branch stable --single-branch https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
+
+          mv .release_clone/.release_github_only_auto .release
+          mv .release/.releaserc.yml .releaserc.yml
+
       - name: Setup Node.js
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:

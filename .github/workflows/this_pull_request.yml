@@ -13,6 +13,6 @@ on:
 
 jobs:
   default:
-    # yamllint disable-line rule:line-length
-    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/default_pull_request_callable.yml@6cebb62b60151c78910271dc54c22e0046d2f23e
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/default_pull_request_callable.yml@stable
     secrets: inherit

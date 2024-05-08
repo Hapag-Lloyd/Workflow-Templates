@@ -33,6 +33,15 @@ jobs:
         with:
           ref: release-dry-run
 
+      - name: Setup release
+        run: |
+          pwd
+          # using stable here to be able to quickly switch to a working version in case the current stable is broken 
+          git clone --no-tags --branch stable --single-branch https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
+
+          mv .release_clone/.release_maven_auto .release
+          mv .release/.releaserc.yml .releaserc.yml
+
       - name: Set up JDK 21
         uses: actions/setup-java@99b8673ff64fbf99d8d325f52d9a5bdedb8483e9 # v4.2.1
         with:
