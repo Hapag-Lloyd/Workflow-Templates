@@ -16,11 +16,11 @@ jobs:
       - name: Setup release
         run: |
           git clone --no-tags --depth 1 --branch stable https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
+          
           pwd
-          ls -la .
-          ls -la .release_clone/
+          find .
           
           mv .release_clone/.release_github_only_auto .release
-          mv .release/.releaserec.yml .releaserec.yml
+          mv .release/.releaserec.yml .releaserc.yml
           
           ls -la .release/
