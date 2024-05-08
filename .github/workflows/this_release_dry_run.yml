@@ -1,0 +1,14 @@
+---
+name: Try a release
+
+# yamllint disable-line rule:truthy
+on:
+  push:
+    branches:
+      - release-dry-run
+
+jobs:
+  default:
+    # yamllint disable-line rule:line-length
+    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/github_release_dry_run_callable.yml@6cebb62b60151c78910271dc54c22e0046d2f23e
+    secrets: inherit

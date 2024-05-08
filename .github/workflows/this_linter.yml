@@ -1,0 +1,20 @@
+---
+name: Lint files
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+
+jobs:
+  default:
+    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/default_linter_callable.yml@6cebb62b60151c78910271dc54c22e0046d2f23e
+    secrets: inherit
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out workflow repo .release folder
+        uses: actions/checkout@master
+        with:
+          repository: Hapag-Lloyd/Repository-Templates
+          path: .release

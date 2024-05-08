@@ -1,0 +1,39 @@
+---
+name: Release
+
+# yamllint disable-line rule:truthy
+on:
+  # USE_WORKFLOW
+  workflow_call:
+    secrets:
+      SEMANTIC_RELEASE_GH_TOKEN:
+        required: true
+# /USE_WORKFLOW
+# USE_REPOSITORY
+#  push:
+#    branches:
+#      - main
+# /USE_REPOSITORY
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: "lts/*"
+
+      - name: Install dependencies
+        run: npm --prefix .release/ ci
+
+      - name: Release
+        run: npx --prefix .release/ semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}

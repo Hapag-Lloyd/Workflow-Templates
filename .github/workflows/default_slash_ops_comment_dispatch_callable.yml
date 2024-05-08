@@ -1,0 +1,26 @@
+---
+name: PR commented
+
+# yamllint disable-line rule:truthy
+on:
+  # USE_WORKFLOW
+  workflow_call:
+# /USE_WORKFLOW
+# USE_REPOSITORY
+#  issue_comment:
+#    types:
+#      - created
+# /USE_REPOSITORY
+
+jobs:
+  slash-command-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Slash Command Dispatch
+        uses: peter-evans/slash-command-dispatch@13bc09769d122a64f75aa5037256f6f2d78be8c4 # v4.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-type: pull-request
+          reactions: true
+          commands: |
+            help

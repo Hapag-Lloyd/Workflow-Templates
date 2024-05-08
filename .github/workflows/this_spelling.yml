@@ -1,0 +1,11 @@
+---
+name: "Check spelling"
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+
+jobs:
+  default:
+    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/default_spelling_callable.yml@6cebb62b60151c78910271dc54c22e0046d2f23e
+    secrets: inherit
