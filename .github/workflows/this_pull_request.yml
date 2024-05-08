@@ -1,0 +1,18 @@
+---
+name: "Pull Request"
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches-ignore:
+      - "release-please--branches--*"
+
+jobs:
+  default:
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_pull_request_callable.yml
+    secrets: inherit

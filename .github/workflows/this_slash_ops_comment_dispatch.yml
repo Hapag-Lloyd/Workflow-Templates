@@ -1,0 +1,14 @@
+---
+name: PR commented
+
+# yamllint disable-line rule:truthy
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  default:
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_slash_ops_comment_dispatch_callable.yml
+    secrets: inherit

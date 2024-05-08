@@ -1,0 +1,89 @@
+---
+name: Build & Push Docker Image
+
+# Only builds the image if a release was created.
+# This guarantees the commit is tagged and on main branch.
+# (see https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
+
+# yamllint disable-line rule:truthy
+on:
+  # USE_WORKFLOW
+  workflow_call:
+    inputs:
+      image-name:
+        type: string
+        required: true
+        description: "Name of the image. Usually it is sensible to set this to the repository name"
+      push:
+        type: boolean
+        required: false
+        description: "Flag to enable the workflow to actually push the built image to the registry"
+        default: false
+      upload-security-scan-results:
+        type: boolean
+        required: false
+        description: "Upload results of trivy scan of docker image to Github Security page"
+        default: false
+# /USE_WORKFLOW
+# USE_REPOSITORY
+#  release:
+# /USE_REPOSITORY
+
+jobs:
+  docker-build-push:
+    runs-on: ubuntu-latest
+    env:
+      # hard-coded organization prefix here in order to push images
+      IMAGE_NAME: hlag/${{ inputs.image-name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
+      - name: Configure Tags
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # v5.5.1
+        id: meta
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=pr
+            type=edge,enable={{is_default_branch}}
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # v3.3.0
+      - name: Login to DockerHub Container Registry
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # v3.1.0
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build Image
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
+        with:
+          context: .
+          load: true
+          tags: ${{ env.IMAGE_NAME }}:trivy-scan
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@d710430a6722f083d3b36b8339ff66b32f22ee55 # 0.19.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:trivy-scan
+          format: "sarif"
+          output: "trivy-results.sarif"
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@4355270be187e1b672a7a1c7c7bae5afdc1ab94a # v3.25.3
+        if: ${{ inputs.upload-security-scan-results }}
+        with:
+          sarif_file: "trivy-results.sarif"
+      - name: Build and push image
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # v5.3.0
+        with:
+          context: .
+          push: ${{ inputs.push }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

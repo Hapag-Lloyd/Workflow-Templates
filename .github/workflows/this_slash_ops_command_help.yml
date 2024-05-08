@@ -1,0 +1,14 @@
+---
+name: Execute ChatOps command
+
+# yamllint disable-line rule:truthy
+on:
+  repository_dispatch:
+    types:
+      - help-command
+
+jobs:
+  default:
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_slash_ops_command_help_callable.yml
+    secrets: inherit

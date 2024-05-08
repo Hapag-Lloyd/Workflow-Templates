@@ -1,0 +1,14 @@
+---
+name: PR opened
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request_target:
+    types:
+      - opened
+
+jobs:
+  default:
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_welcome_message_callable.yml
+    secrets: inherit

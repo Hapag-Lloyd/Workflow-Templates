@@ -1,0 +1,28 @@
+---
+name: Prepare Release PR
+
+# yamllint disable-line rule:truthy
+on:
+  # USE_WORKFLOW
+  workflow_call:
+    secrets:
+      SEMANTIC_RELEASE_GH_TOKEN:
+        required: true
+# /USE_WORKFLOW
+# USE_REPOSITORY
+#  push:
+#    branches:
+#      - main
+# /USE_REPOSITORY
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release
+        uses: google-github-actions/release-please-action@a37ac6e4f6449ce8b3f7607e4d97d0146028dc0b # v4.1.0
+        with:
+          release-type: terraform-module
+          include-v-in-tag: false
+          # temporary tokens do not work as they don't have access to protected tags
+          token: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}

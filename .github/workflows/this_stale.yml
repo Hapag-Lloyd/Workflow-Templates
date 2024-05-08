@@ -1,0 +1,13 @@
+---
+name: "Close stale issues and PRs"
+
+# yamllint disable-line rule:truthy
+on:
+  schedule:
+    - cron: "25 2 * * *"
+
+jobs:
+  default:
+    # using stable to be able to quickly switch to a working version in case the current stable is broken
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_stale_callable.yml
+    secrets: inherit
