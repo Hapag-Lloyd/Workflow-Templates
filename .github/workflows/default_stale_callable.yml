@@ -3,7 +3,7 @@ name: "Close stale issues and PRs"
 
 # yamllint disable-line rule:truthy
 on:
-  # USE_WORKFLOW 
+  # USE_WORKFLOW
   workflow_call:
 # /USE_WORKFLOW
 # USE_REPOSITORY

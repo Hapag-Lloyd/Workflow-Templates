@@ -81,7 +81,7 @@ do
   cat >> "$file" <<-EOF
 jobs:
   default:
-    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/$base_name@stable
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@stable
     secrets: inherit
 EOF
 

@@ -10,5 +10,5 @@ on:
 jobs:
   default:
     # using stable to be able to quickly switch to a working version in case the current stable is broken
-    uses: Hapag-Lloyd/Repository-Templates/.github/workflows/github_release_callable.yml@stable
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/github_release_callable.yml@stable
     secrets: inherit
