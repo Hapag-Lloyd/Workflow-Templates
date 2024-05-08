@@ -18,3 +18,5 @@ jobs:
         with:
           repository: Hapag-Lloyd/Repository-Templates
           path: .release
+      - name: Show .release folder
+        run: ls -la .release
