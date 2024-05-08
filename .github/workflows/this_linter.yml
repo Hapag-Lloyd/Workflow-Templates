@@ -22,7 +22,9 @@ jobs:
         run: |
           pwd 
           git clone --no-tags --branch stable --single-branch https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
-          
+
+      - name: move files
+        run: |
           pwd
           find .
           
