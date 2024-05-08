@@ -22,7 +22,7 @@ jobs:
 
       - name: Setup release
         run: |
-          ls -la *
+          ls -la .
           ls -la .release_clone/
           
           mv .release_clone/.release_github_only_auto .release
