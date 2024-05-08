@@ -25,6 +25,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checkout release setup
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
+        with:
+          repository: Hapag-Lloyd/Workflow-Templates
+          path: .release_clone
+          ref: stable
+
+      - name: Setup release
+        run: |
+          mv .release_clone/.release_github_only_auto .release
+          mv .release_clone/.release_github_only_auto/.releaserec.yml .releaserec.yml
+          ls -la .release/
+
       - name: Setup Node.js
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
         with:
