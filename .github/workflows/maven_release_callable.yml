@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup release
         run: |
-          # using same ref as in calling workflow 
+          # using same ref as in calling workflow
           git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
           git checkout ${{ github.action_ref }}
 
