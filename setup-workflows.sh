@@ -30,7 +30,7 @@ function check_and_set_parameters() {
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
   # check for 3 mandatory positional arguments
-  if [ "${#POSITIONAL_ARGS[@]}" -ne 4 ]; then
+  if [ "${#POSITIONAL_ARGS[@]}" -ne 2 ]; then
     echo "Usage: $0 <path-to-new-repo> <repository-type>"
     exit 1
   fi

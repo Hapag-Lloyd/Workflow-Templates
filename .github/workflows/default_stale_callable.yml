@@ -5,7 +5,7 @@ name: "Close stale issues and PRs"
 on:
   # USE_WORKFLOW
   workflow_call:
-# USE_WORKFLOW
+# /USE_WORKFLOW
 # USE_REPOSITORY
 #  schedule:
 #    - cron: "25 2 * * *"
