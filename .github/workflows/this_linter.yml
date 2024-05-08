@@ -10,3 +10,14 @@ jobs:
     # using stable to be able to quickly switch to a working version in case the current stable is broken
     uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_linter_callable.yml@stable
     secrets: inherit
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        run: |
+          git tag x
+          git push --tags
