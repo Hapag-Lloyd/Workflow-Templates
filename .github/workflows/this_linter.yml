@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
         with:
           fetch-depth: 0
-          
+
       - name: Setup release
         run: |
           pwd 
@@ -27,6 +27,8 @@ jobs:
           find .
           
           mv .release_clone/.release_github_only_auto .release
+          find .
+          
           mv .release/.releaserec.yml .releaserc.yml
           
           ls -la .release/
