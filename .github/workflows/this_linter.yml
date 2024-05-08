@@ -13,15 +13,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout release setup
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
-        with:
-          repository: Hapag-Lloyd/Workflow-Templates
-          path: .release_clone
-          ref: stable
-
       - name: Setup release
         run: |
+          git clone --no-tags --depth 1 --branch stable https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
           pwd
           ls -la .
           ls -la .release_clone/
