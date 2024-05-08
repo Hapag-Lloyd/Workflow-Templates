@@ -78,10 +78,13 @@ do
   # remove everything else as we will reference the file in this repository
   sed -i '/jobs:/,$d' "$file"
 
+  # add a reference to this repository which holds the workflow
+  commit_sha=$(git rev-parse HEAD)
+
   cat >> "$file" <<-EOF
 jobs:
   default:
-    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha
     secrets: inherit
 EOF
 
