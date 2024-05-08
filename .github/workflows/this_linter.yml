@@ -13,10 +13,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out workflow repo .release folder
-        uses: actions/checkout@master
+      - name: Checkout release setup
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
         with:
-          repository: Hapag-Lloyd/Repository-Templates
-          path: .release
-      - name: Show .release folder
-        run: ls -la .release
+          repository: Hapag-Lloyd/Workflow-Templates
+          path: .release_clone
+          ref: stable
+
+      - name: Setup release
+        run: |
+          mv .release_clone/.release_github_only_auto .release
+          mv .release_clone/.release_github_only_auto/.releaserec.yml .releaserec.yml
+          ls -la .release/
