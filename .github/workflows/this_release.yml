@@ -10,21 +10,5 @@ on:
 jobs:
   default:
     # using stable to be able to quickly switch to a working version in case the current stable is broken
-    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/github_release_callable.yml@stable
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_release_callable.yml
     secrets: inherit
-
-  tag-stable:
-    runs-on: ubuntu-latest
-    needs: default
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.4
-        with:
-          fetch-depth: 1
-          ref: ${{ jobs.default.outputs.version }}
-
-      - name: Tag stable
-        run: |
-          git tag stable --force
-          git push --tags --force

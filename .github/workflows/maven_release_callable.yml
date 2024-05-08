@@ -35,9 +35,9 @@ jobs:
 
       - name: Setup release
         run: |
-          pwd
-          # using stable here to be able to quickly switch to a working version in case the current stable is broken 
-          git clone --no-tags --branch stable --single-branch https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
+          # using same ref as in calling workflow 
+          git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git .release_clone
+          git checkout ${{ github.action_ref }}
 
           mv .release_clone/.release_maven_auto .release
           mv .release/.releaserc.yml .releaserc.yml

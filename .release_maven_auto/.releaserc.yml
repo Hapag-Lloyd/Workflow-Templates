@@ -108,8 +108,6 @@ publish:
     assets:
       - path: "CHANGELOG.md"
         label: "Changelog"
-  - path: "@semantic-release/exec"
-    publishCmd: "echo \"version=${nextRelease.version}\" > version.env"
 
 success:
 
