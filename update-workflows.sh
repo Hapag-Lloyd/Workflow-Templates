@@ -144,7 +144,7 @@ do
 
   file_to_include="    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha"
   if [ ${#file_to_include} -gt 132 ]; then
-    file_to_include="# yaml-lint disable-line rule:line-length"$'\n'"$file_to_include"
+    file_to_include="# yamllint disable-line rule:line-length"$'\n'"$file_to_include"
   fi
   cat >> "$file" <<-EOF
 jobs:
