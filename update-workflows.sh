@@ -3,22 +3,71 @@ set -euo pipefail
 
 destination_path=""
 repository_type=""
+release_type="auto"
 
-function check_prerequisites() {
+function ensure_prerequisites_or_exit() {
   if ! command -v yq &> /dev/null; then
     echo "yq is not installed. https://github.com/mikefarah/yq"
     exit 1
   fi
+
+  if ! command -v gh &> /dev/null; then
+    echo "gh is not installed. Please install it from https://cli.github.com/"
+    exit 1
+  fi
 }
 
-function check_and_set_parameters() {
+function ensure_repo_preconditions_or_exit() {
+  # ensure main branch
+  if [ "$(git branch --show-current)" != "main" ]; then
+    echo "The current branch is not main. Please switch to the main branch."
+    exit 1
+  fi
+
+  # ensure a clean working directory
+  if [ -n "$(git status --porcelain)" ]; then
+    echo "The working directory is not clean. Please use a clean copy so no unintended changes are merged."
+    exit 1
+  fi
+}
+
+function show_help_and_exit() {
+  echo "Usage: $0 <path-to-new-repo> <repository-type> --release-type auto|manual"
+  echo "repository-type: docker, github-only, maven, terraform_module"
+  echo "release-type: (optional)"
+  echo "  auto: the release will be triggered automatically on a push to the default branch"
+  echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
+
+  exit 1
+}
+
+function create_commit_and_pr() {
+  local repo_directory=$1
+
+  cd "$repo_directory" || exit 7
+
+  git checkout -b update-workflows
+
+  git add .
+  git commit -m "update workflows to latest version"
+  git push --set-upstream origin update-workflows
+
+  gh pr create --title "ci: update workflows to latest version" --body "" --base main
+  gh pr view --web
+}
+
+function ensure_and_set_parameters_or_exit() {
   POSITIONAL_ARGS=()
 
   while [[ $# -gt 0 ]]; do
     case $1 in
+      --release-type)
+        release_type=$1
+        shift
+        ;;
       --*|-*)
         echo "Unknown option $1"
-        exit 1
+        show_help_and_exit
         ;;
       *)
         POSITIONAL_ARGS+=("$1") # save positional arg
@@ -31,8 +80,7 @@ function check_and_set_parameters() {
 
   # check for 3 mandatory positional arguments
   if [ "${#POSITIONAL_ARGS[@]}" -ne 2 ]; then
-    echo "Usage: $0 <path-to-new-repo> <repository-type>"
-    exit 1
+    show_help_and_exit
   fi
 
   destination_path=$1
@@ -47,12 +95,20 @@ function check_and_set_parameters() {
   # check for correct type: docker, github-only, maven, terraform_module
   if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ]; then
     echo "The repository type $repository_type is not supported."
-    exit 3
+    show_help_and_exit
+  fi
+
+  if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual" ]; then
+    echo "The release type 'manual' is only supported for terraform_module repositories."
+    show_help_and_exit
   fi
 }
 
-check_prerequisites
-check_and_set_parameters "$@"
+ensure_prerequisites_or_exit
+ensure_repo_preconditions_or_exit
+ensure_and_set_parameters_or_exit "$@"
+
+echo "Updating the workflows in $destination_path"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
@@ -64,6 +120,11 @@ cp .github/workflows/default_* .github/workflows/release_* "$destination_path/.g
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
   cp ".github/workflows/${repository_type}"_* "$destination_path/.github/workflows/"
+fi
+
+# setup the release workflow
+if [ "$release_type" == "manual" ]; then
+  rm "$destination_path/.github/workflows/"default*release*_callable.yml
 fi
 
 #
@@ -180,3 +241,5 @@ do
     fi
   done
 done
+
+create_commit_and_pr "$destination_path"
