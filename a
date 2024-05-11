@@ -1,0 +1,6 @@
+file_to_include="x"
+file_to_include="# yaml-lint disable-line rule:line-length"$'\n'"    uses: $file_to_include"
+
+cat > b <<EOF
+$file_to_include
+EOF

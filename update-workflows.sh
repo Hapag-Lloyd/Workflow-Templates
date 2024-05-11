@@ -142,10 +142,14 @@ do
   # add a reference to this repository which holds the workflow
   commit_sha=$(git rev-parse HEAD)
 
+  file_to_include="    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha"
+  if [ ${#file_to_include} -gt 132 ]; then
+    file_to_include="# yaml-lint disable-line rule:line-length"$'\n'"$file_to_include"
+  fi
   cat >> "$file" <<-EOF
 jobs:
   default:
-    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha
+    $file_to_include
     secrets: inherit
 EOF
 
