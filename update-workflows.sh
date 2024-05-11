@@ -98,9 +98,9 @@ function ensure_and_set_parameters_or_exit() {
   fi
 }
 
-check_prerequisites
+ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
-check_and_set_parameters "$@"
+ensure_and_set_parameters_or_exit "$@"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
