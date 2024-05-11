@@ -146,6 +146,7 @@ do
   if [ ${#file_to_include} -gt 132 ]; then
     file_to_include="# yamllint disable-line rule:line-length"$'\n'"$file_to_include"
   fi
+  
   cat >> "$file" <<-EOF
 jobs:
   default:
