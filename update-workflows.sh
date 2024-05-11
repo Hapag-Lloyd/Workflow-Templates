@@ -93,7 +93,7 @@ function ensure_and_set_parameters_or_exit() {
     show_help_and_exit
   fi
 
-  if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual"]; then
+  if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual" ]; then
     echo "The release type 'manual' is only supported for terraform_module repositories."
     show_help_and_exit
   fi
