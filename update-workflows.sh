@@ -19,11 +19,10 @@ function ensure_prerequisites_or_exit() {
 
 function ensure_repo_preconditions_or_exit() {
   # ensure main branch
-  # FIXME enable again
-#  if [ "$(git branch --show-current)" != "main" ]; then
-#    echo "The current branch is not main. Please switch to the main branch."
-#    exit 1
-#  fi
+  if [ "$(git branch --show-current)" != "main" ]; then
+    echo "The current branch is not main. Please switch to the main branch."
+    exit 1
+  fi
 
   # ensure a clean working directory
   if [ -n "$(git status --porcelain)" ]; then
@@ -53,7 +52,7 @@ function create_commit_and_pr() {
   git commit -m "update workflows to latest version"
   git push --set-upstream origin update-workflows
 
-  gh pr create --title "ci: update workflows to latest version" --base main
+  gh pr create --title "ci: update workflows to latest version" --body "" --base main
   gh pr view --web
 }
 
@@ -105,11 +104,11 @@ function ensure_and_set_parameters_or_exit() {
   fi
 }
 
-echo "Updating the workflows in $destination_path"
-
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 ensure_and_set_parameters_or_exit "$@"
+
+echo "Updating the workflows in $destination_path"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
