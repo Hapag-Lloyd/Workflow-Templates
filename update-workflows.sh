@@ -43,6 +43,10 @@ function show_help_and_exit() {
 }
 
 function create_commit_and_pr() {
+  local repo_directory=$1
+
+  cd "$repo_directory" || exit 7
+
   git add .
   git commit -m "update workflows to latest version"
   git push
@@ -99,16 +103,14 @@ function ensure_and_set_parameters_or_exit() {
   fi
 }
 
+echo "Updating the workflows in $destination_path"
+
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 ensure_and_set_parameters_or_exit "$@"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
-
-echo "Updating the workflows in $destination_path"
-pwd
-ls -la
 
 # basic setup for all types
 mkdir -p "$destination_path/.github/workflows"
@@ -239,4 +241,4 @@ do
   done
 done
 
-create_commit_and_pr
+create_commit_and_pr "$destination_path"
