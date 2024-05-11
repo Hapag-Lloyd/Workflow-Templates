@@ -106,6 +106,10 @@ ensure_and_set_parameters_or_exit "$@"
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
 
+echo "Updating the workflows in $destination_path"
+pwd
+ls -la
+
 # basic setup for all types
 mkdir -p "$destination_path/.github/workflows"
 cp .github/workflows/default_* .github/workflows/release_* "$destination_path/.github/workflows/"
