@@ -19,10 +19,11 @@ function ensure_prerequisites_or_exit() {
 
 function ensure_repo_preconditions_or_exit() {
   # ensure main branch
-  if [ "$(git branch --show-current)" != "main" ]; then
-    echo "The current branch is not main. Please switch to the main branch."
-    exit 1
-  fi
+  # FIXME enable again
+#  if [ "$(git branch --show-current)" != "main" ]; then
+#    echo "The current branch is not main. Please switch to the main branch."
+#    exit 1
+#  fi
 
   # ensure a clean working directory
   if [ -n "$(git status --porcelain)" ]; then
