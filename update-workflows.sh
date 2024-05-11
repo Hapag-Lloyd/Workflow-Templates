@@ -47,9 +47,11 @@ function create_commit_and_pr() {
 
   cd "$repo_directory" || exit 7
 
+  git checkout -b update-workflows
+
   git add .
   git commit -m "update workflows to latest version"
-  git push
+  git push --set-upstream origin update-workflows
 
   gh pr create --title "ci: update workflows to latest version" --base main
   gh pr view --web
