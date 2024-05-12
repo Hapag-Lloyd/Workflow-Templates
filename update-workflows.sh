@@ -115,7 +115,7 @@ shopt -s nullglob
 
 # basic setup for all types
 mkdir -p "$destination_path/.github/workflows"
-cp .github/workflows/default_* .github/workflows/release_* "$destination_path/.github/workflows/"
+cp .github/workflows/default_* "$destination_path/.github/workflows"
 
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
@@ -142,11 +142,13 @@ do
   # add a reference to this repository which holds the workflow
   commit_sha=$(git rev-parse HEAD)
 
-  file_to_include="    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha"
-  if [ ${#file_to_include} -gt 132 ]; then
-    file_to_include="# yamllint disable-line rule:line-length"$'\n'"$file_to_include"
+  file_to_include="uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha"
+
+  # 128 = 132 - 4 spaces (indentation)
+  if [ ${#file_to_include} -gt 128 ]; then
+    file_to_include="# yamllint disable-line rule:line-length"$'\n'"    $file_to_include"
   fi
-  
+
   cat >> "$file" <<-EOF
 jobs:
   default:
