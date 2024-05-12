@@ -1,35 +1,30 @@
 {
-  "name": "dummy-release",
+  "name": "semantic-release-maven",
   "version": "1.0.0",
-  "description": "just a dummy to run the release",
+  "description": "Creates a Maven release with semantic-release and deploys it to Maven Central",
   "main": "index.js",
-  "directories": {
-    "example": "../examples"
-  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Hapag-Lloyd/log4j2-filtered-stacktrace-plugin.git"
+    "url": "git+https://github.com/Hapag-Lloyd/Workflow-Templates.git"
   },
-  "author": "",
-  "license": "Apache-2.0",
+  "author": "Hapag-Lloyd AG",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Hapag-Lloyd/log4j2-filtered-stacktrace-plugin/issues"
+    "url": "https://github.com/Hapag-Lloyd/Workflow-Templaates/issues"
   },
-  "homepage": "https://github.com/Hapag-Lloyd/log4j2-filtered-stacktrace-plugin#readme",
+  "homepage": "https://github.com/Hapag-Lloyd/Workflwo-Templates#readme",
   "dependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/commit-analyzer": "^12.0.0",
-    "@semantic-release/exec": "^6.0.3",
-    "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.0.0",
-    "@semantic-release/release-notes-generator": "^13.0.0",
-    "conventional-changelog-conventionalcommits": "^7.0.2",
-    "semantic-release": "^23.0.0"
-  },
-  "devDependencies": {
-    "semantic-release-maven": "^1.1.7"
+    "@semantic-release/changelog": "6.0.3",
+    "@semantic-release/commit-analyzer": "12.0.0",
+    "@semantic-release/exec": "6.0.3",
+    "@semantic-release/git": "10.0.1",
+    "@semantic-release/github": "10.0.0",
+    "@semantic-release/release-notes-generator": "13.0.0",
+    "conventional-changelog-conventionalcommits": "7.0.2",
+    "semantic-release": "23.0.0",
+    "semantic-release-maven": "1.1.8"
   }
 }
