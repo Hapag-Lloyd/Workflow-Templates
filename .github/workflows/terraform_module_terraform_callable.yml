@@ -6,9 +6,9 @@ on:
   # USE_WORKFLOW
   workflow_call:
     secrets:
-      AWS_TFLINT_ROLE_ARN:
+      TFLINT_ROLE_ARN:
         required: true
-      AWS_REGION:
+      TFLINT_AWS_REGION:
         required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
