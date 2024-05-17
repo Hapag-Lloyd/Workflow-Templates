@@ -67,7 +67,7 @@ jobs:
           tflint_version="v0.50.3"
 
           curl -o tflint.zip -L \
-            https://github.com/terraform-linters/tflint/releases/download/v${tflint_version}/tflint_linux_amd64.zip
+            https://github.com/terraform-linters/tflint/releases/download/${tflint_version}/tflint_linux_amd64.zip
           unzip tflint.zip
 
       - name: Show version
