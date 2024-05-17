@@ -141,8 +141,9 @@ do
 
   # add a reference to this repository which holds the workflow
   commit_sha=$(git rev-parse HEAD)
+  tag=$(git describe --tags --exact-match 2>/dev/null || true)
 
-  file_to_include="uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha"
+  file_to_include="uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha # $tag"
 
   # 128 = 132 - 4 spaces (indentation)
   if [ ${#file_to_include} -gt 128 ]; then
