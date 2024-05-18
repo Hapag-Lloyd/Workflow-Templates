@@ -14,7 +14,7 @@ on:
 
 jobs:
   welcome-message:
-    if: endsWith(github.actor, '[bot]') == false
+    if: ${{ ! endsWith(github.actor, '[bot]') }}
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
