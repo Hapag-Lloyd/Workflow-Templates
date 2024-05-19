@@ -9,6 +9,7 @@ on:
 # USE_REPOSITORY
 #  pull_request:
 #  schedule:
+#    # runs mondays at 3:47 UTC
 #    - cron: "47 3 * * 1"
 # /USE_REPOSITORY
 
