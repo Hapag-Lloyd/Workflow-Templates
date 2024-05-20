@@ -22,9 +22,6 @@ jobs:
             json:
               - added|modified: '**/*.json'
 
-            markdown:
-              - added|modified: '**/*.md'
-
             renovate-config:
               - added|modified:
                 - 'renovate.json'
@@ -34,21 +31,13 @@ jobs:
                 # used for shareable presets
                 - 'default.json'
 
-            workflow:
-              - added|modified:
-                - '.github/workflows/*.yml'
-                - '.github/workflows/*.yaml'
-
             dockerfile:
               - added|modified: '**/*Dockerfile*'
     outputs:
       json: ${{ steps.changes.outputs.json }}
-      markdown: ${{ steps.changes.outputs.markdown }}
       renovate-config: ${{ steps.changes.outputs.renovate-config }}
-      workflow: ${{ steps.changes.outputs.workflow }}
       dockerfile_files: ${{ steps.changes.outputs.dockerfile_files }}
 
-  # FIXME
   lint-json:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -60,32 +49,21 @@ jobs:
       - name: Run JSON Lint
         run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/json-lint/master/pipeline.sh)
 
-  # FIXME
-  lint-markdown:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    if: needs.find-changes.outputs.markdown == 'true'
-    needs: find-changes
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Validate Markdown file
-        run: |
-          npm install -g markdownlint-cli
-          markdownlint -c .config/markdownlint.yml -i CHANGELOG.md "**/*.md"
-
-  # FIXME
   lint-renovate:
     runs-on: ubuntu-latest
     continue-on-error: true
     if: needs.find-changes.outputs.renovate-config == 'true'
     needs: find-changes
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.find-changes.outputs.renovate-config_files) }}
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
       - uses: suzuki-shunsuke/github-action-renovate-config-validator@b54483862375f51910a60c4f498e927d4f3df466 # v1.0.1
+        with:
+          config-path: ${{ matrix.file }}
 
-  # FIXME
   lint-shell:
     name: Check shell scripts
     runs-on: ubuntu-latest
@@ -94,23 +72,6 @@ jobs:
 
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
-
-  # FIXME
-  lint-workflow:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    needs: find-changes
-    if: needs.find-changes.outputs.workflow == 'true'
-    container:
-      image: rhysd/actionlint:1.7.0@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244
-      options: --cpus 1 --user root
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Validate Github workflows
-        run: |
-          mkdir .git
-          actionlint -color
 
   lint-docker:
     runs-on: ubuntu-latest
