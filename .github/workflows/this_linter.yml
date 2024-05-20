@@ -37,5 +37,5 @@ jobs:
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
         with:
           config_file: .config/yamllint.yml
-          file_or_dir: ${{ steps.filter-changes-for-shell-output.outputs.yaml_files }}
+          file_or_dir: ${{ needs.filter-changes-for-shell-output.outputs.yaml_files }}
           strict: true
