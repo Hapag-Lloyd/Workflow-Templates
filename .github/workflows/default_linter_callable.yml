@@ -20,35 +20,99 @@ jobs:
           list-files: "json"
           filters: |
             json:
-              - '**/*.json'
-
-            markdown:
-              - '**/*.md'
+              - added|modified: '**/*.json'
 
             renovate-config:
-              - 'renovate.json'
-              - '.github/renovate.json'
-              - 'renovate.json5'
-              - '.github/renovate.json5'
-              - 'default.json'
-
-            workflow:
-              - '.github/workflows/*.yml'
-              - '.github/workflows/*.yaml'
-
-            yaml:
-              - '**/*.yaml'
-              - '**/*.yml'
+              - added|modified:
+                - 'renovate.json'
+                - 'renovate.json5'
+                - '.github/renovate.json'
+                - '.github/renovate.json5'
+                # used for shareable presets
+                - 'default.json'
 
             dockerfile:
-              - '**/*Dockerfile*'
+              - added|modified: '**/*Dockerfile*'
     outputs:
-      json: ${{ steps.changes.outputs.json }}
-      markdown: ${{ steps.changes.outputs.markdown }}
-      renovate-config: ${{ steps.changes.outputs.renovate-config }}
-      workflow: ${{ steps.changes.outputs.workflow }}
-      yaml: ${{ steps.changes.outputs.yaml }}
+      dockerfile: ${{ steps.changes.outputs.dockerfile }}
       dockerfile_files: ${{ steps.changes.outputs.dockerfile_files }}
+      json: ${{ steps.changes.outputs.json }}
+      json_files: ${{ steps.changes.outputs.json_files }}
+      renovate-config: ${{ steps.changes.outputs.renovate-config }}
+      renovate-config_files: ${{ steps.changes.outputs.renovate-config_files }}
+
+  find-changes-for-shell-output:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: changes-for-shell
+        with:
+          list-files: "shell"
+          filters: |
+            markdown:
+            - added|modified: '**/*.md'
+
+            workflow:
+              - added|modified:
+                - '.github/workflows/*.yml'
+                - '.github/workflows/*.yaml'
+
+            yaml:
+              - added|modified:
+                - '**/*.yaml'
+                - '**/*.yml'
+    outputs:
+      markdown: ${{ steps.changes-for-shell.outputs.markdown }}
+      markdown_files: ${{ steps.changes-for-shell.outputs.markdown_files }}
+      workflow: ${{ steps.changes-for-shell.outputs.workflow }}
+      workflow_files: ${{ steps.changes-for-shell.outputs.workflow_files }}
+      yaml: ${{ steps.changes-for-shell.outputs.yaml }}
+      yaml_files: ${{ steps.changes-for-shell.outputs.yaml_files }}
+
+  lint-markdown:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    if: needs.find-changes-for-shell-output.outputs.markdown == 'true'
+    needs: find-changes-for-shell-output
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Validate Markdown file
+        run: |
+          npm install -g markdownlint-cli
+          # do not check CHANGELOG.md, it is generated automatically
+          markdownlint -c .config/markdownlint.yml -i CHANGELOG.md ${{ needs.find-changes-for-shell-output.outputs.markdown_files }}
+
+  lint-workflow:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: find-changes-for-shell-output
+    if: needs.find-changes-for-shell-output.outputs.workflow == 'true'
+    container:
+      image: rhysd/actionlint:1.7.0@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244
+      options: --cpus 1 --user root
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Validate Github workflows
+        run: |
+          mkdir .git
+          actionlint -color ${{ needs.find-changes-for-shell-output.outputs.workflow_files }}
+
+  lint-yaml:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    needs: find-changes-for-shell-output
+    if: needs.find-changes-for-shell-output.outputs.yaml == 'true'
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: yaml-lint
+        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
+        with:
+          config_file: .config/yamllint.yml
+          file_or_dir: ${{ needs.find-changes-for-shell-output.outputs.yaml_files }}
+          strict: true
 
   lint-json:
     runs-on: ubuntu-latest
@@ -61,28 +125,20 @@ jobs:
       - name: Run JSON Lint
         run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/json-lint/master/pipeline.sh)
 
-  lint-markdown:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    if: needs.find-changes.outputs.markdown == 'true'
-    needs: find-changes
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Validate Markdown file
-        run: |
-          npm install -g markdownlint-cli
-          markdownlint -c .config/markdownlint.yml -i CHANGELOG.md "**/*.md"
-
   lint-renovate:
     runs-on: ubuntu-latest
     continue-on-error: true
     if: needs.find-changes.outputs.renovate-config == 'true'
     needs: find-changes
+    strategy:
+      matrix:
+        file: ${{ fromJson(needs.find-changes.outputs.renovate-config_files) }}
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
       - uses: suzuki-shunsuke/github-action-renovate-config-validator@b54483862375f51910a60c4f498e927d4f3df466 # v1.0.1
+        with:
+          config-path: ${{ matrix.file }}
 
   lint-shell:
     name: Check shell scripts
@@ -92,36 +148,6 @@ jobs:
 
       - name: ShellCheck
         uses: ludeeus/action-shellcheck@00cae500b08a931fb5698e11e79bfbd38e612a38 # 2.0.0
-
-  lint-workflow:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    needs: find-changes
-    if: needs.find-changes.outputs.workflow == 'true'
-    container:
-      image: rhysd/actionlint:1.7.0@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244
-      options: --cpus 1 --user root
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: Validate Github workflows
-        run: |
-          mkdir .git
-          actionlint -color
-
-  lint-yaml:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    needs: find-changes
-    if: needs.find-changes.outputs.yaml == 'true'
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: yaml-lint
-        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
-        with:
-          config_file: .config/yamllint.yml
-          strict: true
 
   lint-docker:
     runs-on: ubuntu-latest
