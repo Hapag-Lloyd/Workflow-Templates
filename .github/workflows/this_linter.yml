@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     if: needs.find-changes-for-shell-output.outputs.markdown == 'true'
-    needs: find-changes
+    needs: find-changes-for-shell-output
     steps:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
 
@@ -52,7 +52,7 @@ jobs:
   lint-workflow:
     runs-on: ubuntu-latest
     continue-on-error: true
-    needs: find-changes
+    needs: find-changes-for-shell-output
     if: needs.find-changes-for-shell-output.outputs.workflow == 'true'
     container:
       image: rhysd/actionlint:1.7.0@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244
