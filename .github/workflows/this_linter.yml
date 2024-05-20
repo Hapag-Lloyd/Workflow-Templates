@@ -34,7 +34,7 @@ jobs:
       markdown: ${{ steps.changes-for-shell.outputs.markdown }}
       markdown_files: ${{ steps.changes-for-shell.outputs.markdown_files }}
       workflow: ${{ steps.changes-for-shell.outputs.workflow }}
-      workflow_flies: ${{ steps.changes-for-shell.outputs.workflow_files }}
+      workflow_files: ${{ steps.changes-for-shell.outputs.workflow_files }}
       yaml: ${{ steps.changes-for-shell.outputs.yaml }}
       yaml_files: ${{ steps.changes-for-shell.outputs.yaml_files }}
 
