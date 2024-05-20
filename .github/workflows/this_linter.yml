@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: changes
+        id: changes-for-shell
         with:
           list-files: "shell"
           filters: |
@@ -31,12 +31,12 @@ jobs:
                 - '**/*.yaml'
                 - '**/*.yml'
     outputs:
-      markdown: ${{ steps.changes.outputs.markdown }}
-      markdown_files: ${{ steps.changes.outputs.markdown_files }}
-      workflow: ${{ steps.changes.outputs.workflow }}
-      workflow_flies: ${{ steps.changes.outputs.workflow_files }}
-      yaml: ${{ steps.changes.outputs.yaml }}
-      yaml_files: ${{ steps.changes.outputs.yaml_files }}
+      markdown: ${{ steps.changes-for-shell.outputs.markdown }}
+      markdown_files: ${{ steps.changes-for-shell.outputs.markdown_files }}
+      workflow: ${{ steps.changes-for-shell.outputs.workflow }}
+      workflow_flies: ${{ steps.changes-for-shell.outputs.workflow_files }}
+      yaml: ${{ steps.changes-for-shell.outputs.yaml }}
+      yaml_files: ${{ steps.changes-for-shell.outputs.yaml_files }}
 
   lint-markdown:
     runs-on: ubuntu-latest
