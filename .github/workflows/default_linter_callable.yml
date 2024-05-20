@@ -33,6 +33,13 @@ jobs:
 
             dockerfile:
               - added|modified: '**/*Dockerfile*'
+    outputs:
+      dockerfile: ${{ steps.changes.outputs.dockerfile }}
+      dockerfile_files: ${{ steps.changes.outputs.dockerfile_files }}
+      json: ${{ steps.changes.outputs.json }}
+      json_files: ${{ steps.changes.outputs.json_files }}
+      renovate-config: ${{ steps.changes.outputs.renovate-config }}
+      renovate-config_files: ${{ steps.changes.outputs.renovate-config_files }}
 
   lint-json:
     runs-on: ubuntu-latest
