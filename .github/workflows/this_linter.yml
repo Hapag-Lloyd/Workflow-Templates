@@ -32,8 +32,11 @@ jobs:
                 - '**/*.yml'
     outputs:
       markdown: ${{ steps.changes.outputs.markdown }}
+      markdown_files: ${{ steps.changes.outputs.markdown_files }}
       workflow: ${{ steps.changes.outputs.workflow }}
+      workflow_flies: ${{ steps.changes.outputs.workflow_files }}
       yaml: ${{ steps.changes.outputs.yaml }}
+      yaml_files: ${{ steps.changes.outputs.yaml_files }}
 
   lint-markdown:
     runs-on: ubuntu-latest
