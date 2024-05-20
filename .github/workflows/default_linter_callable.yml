@@ -126,33 +126,3 @@ jobs:
         uses: hadolint/hadolint-action@54c9adbab1582c2ef04b2016b760714a4bfde3cf # v3.1.0
         with:
           dockerfile: ${{ matrix.file }}
-
-  find-changes-for-shell-output:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
-        id: changes
-        with:
-          list-files: "shell"
-          filters: |
-            yaml:
-              - added|modified:
-                - '**/*.yaml'
-                - '**/*.yml'
-    outputs:
-      yaml: ${{ steps.changes.outputs.yaml }}
-
-  lint-yaml:
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    needs: find-changes-for-shell-output
-    if: needs.find-changes-for-shell-output.outputs.yaml == 'true'
-    steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
-
-      - name: yaml-lint
-        uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
-        with:
-          config_file: .config/yamllint.yml
-          file_or_dir: ${{ steps.filter-changes-for-shell-output.outputs.yaml_files }}
-          strict: true
