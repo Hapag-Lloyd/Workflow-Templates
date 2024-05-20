@@ -39,11 +39,6 @@ jobs:
                 - '.github/workflows/*.yml'
                 - '.github/workflows/*.yaml'
 
-            yaml:
-              - added|modified:
-                - '**/*.yaml'
-                - '**/*.yml'
-
             dockerfile:
               - added|modified: '**/*Dockerfile*'
     outputs:
@@ -51,7 +46,6 @@ jobs:
       markdown: ${{ steps.changes.outputs.markdown }}
       renovate-config: ${{ steps.changes.outputs.renovate-config }}
       workflow: ${{ steps.changes.outputs.workflow }}
-      yaml: ${{ steps.changes.outputs.yaml }}
       dockerfile_files: ${{ steps.changes.outputs.dockerfile_files }}
 
   # FIXME
@@ -145,6 +139,8 @@ jobs:
               - added|modified:
                 - '**/*.yaml'
                 - '**/*.yml'
+    outputs:
+      yaml: ${{ steps.changes.outputs.yaml }}
 
   lint-yaml:
     runs-on: ubuntu-latest
