@@ -63,7 +63,7 @@ function create_commit_and_pr() {
 EOF
   )
   
-  gh pr create --title "ci: update workflows to latest version" --body "" --base main
+  gh pr create --title "ci: update workflows to latest version" --body "$body" --base main
   gh pr view --web
 }
 
