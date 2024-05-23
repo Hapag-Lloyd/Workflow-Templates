@@ -141,7 +141,7 @@ do
 
   # add a reference to this repository which holds the workflow
   commit_sha=$(git rev-parse HEAD)
-  tag=$(git describe --tags $(git rev-list --tags --max-count=1) || true)
+  tag=$(git describe --tags "$(git rev-list --tags --max-count=1)" || true)
 
   file_to_include="uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/$base_name@$commit_sha # $tag"
 
