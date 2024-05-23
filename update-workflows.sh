@@ -61,6 +61,8 @@ function create_commit_and_pr() {
 
     Done by the workflows in this feature branch, except for the release workflow.
 EOF
+  )
+  
   gh pr create --title "ci: update workflows to latest version" --body "" --base main
   gh pr view --web
 }
