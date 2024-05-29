@@ -73,7 +73,8 @@ function ensure_and_set_parameters_or_exit() {
   while [[ $# -gt 0 ]]; do
     case $1 in
       --release-type)
-        release_type=$1
+        release_type=$2
+        shift
         shift
         ;;
       --*|-*)
