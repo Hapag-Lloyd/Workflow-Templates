@@ -105,7 +105,7 @@ jobs:
     needs: find-changes-for-shell-output
     if: needs.find-changes-for-shell-output.outputs.yaml == 'true'
     steps:
-      - uses: actions/checkout@f25a3a9f25bd5f4c5d77189cab02ff357b5aedeb # v2.4.1
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2.7.0
 
       - name: yaml-lint
         uses: ibiqlik/action-yamllint@2576378a8e339169678f9939646ee3ee325e845c # v3.1.1
