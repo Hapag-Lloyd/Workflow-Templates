@@ -23,7 +23,7 @@
     "@semantic-release/git": "10.0.1",
     "@semantic-release/github": "10.3.5",
     "@semantic-release/release-notes-generator": "13.0.0",
-    "conventional-changelog-conventionalcommits": "7.0.2",
+    "conventional-changelog-conventionalcommits": "8.0.0",
     "semantic-release": "23.1.1",
     "semantic-release-maven": "1.1.8"
   }
