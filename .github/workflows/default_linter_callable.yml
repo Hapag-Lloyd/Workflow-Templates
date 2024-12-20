@@ -126,7 +126,7 @@ jobs:
         env:
           INCLUDE_FILES: ${{ needs.find-changes.outputs.json_files }}
         run: |
-          INCLUDE_FILES=$(echo $INCLUDE_FILES | jq -r '. | join(",")')
+          INCLUDE_FILES=$(echo "$INCLUDE_FILES" | jq -r '. | join(",")')
           bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/json-lint/master/pipeline.sh)
 
   lint-renovate:
