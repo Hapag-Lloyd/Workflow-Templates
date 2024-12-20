@@ -123,7 +123,11 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Run JSON Lint
-        run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/json-lint/master/pipeline.sh)
+        env:
+          INCLUDE_FILES: ${{ needs.find-changes.outputs.json_files }}
+        run: |
+          INCLUDE_FILES=$(echo $INCLUDE_FILES | jq -r '. | join(",")')
+          bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/json-lint/master/pipeline.sh)
 
   lint-renovate:
     runs-on: ubuntu-latest
