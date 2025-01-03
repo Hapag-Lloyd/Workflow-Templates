@@ -8,7 +8,7 @@ Clone this repository to your disk and run `setup-workflows.sh`. It copies the n
 locations in your new repository.
 
 ```bash
-./setup-workflows.sh <path-to-new-repository> <type>
+./update-workflows.sh <path-to-new-repository> <type>
 ```
 
 Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
