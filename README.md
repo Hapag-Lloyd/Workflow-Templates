@@ -8,7 +8,7 @@ Clone this repository to your disk and run `setup-workflows.sh`. It copies the n
 locations in your new repository.
 
 ```bash
-./setup-workflows.sh <path-to-new-repository> <type>
+./update-workflows.sh <path-to-new-repository> <type>
 ```
 
 Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
@@ -20,8 +20,8 @@ all files in case of major changes in the templates.
 
 ### Default setup
 
-- Release management is done with [semantic-release](https://github.com/semantic-release/semantic-release). Releases are automatically tagged and published on GitHub. Special
-  releases for Maven Central and Terraform modules are supported.
+- Release management is done with [semantic-release](https://github.com/semantic-release/semantic-release). Releases are automatically
+  tagged and published on GitHub. Special releases for Maven Central and Terraform modules are supported.
 - stale issue and PR management
 - welcome message for contributors
 - linters for all files
@@ -38,7 +38,7 @@ The script to set up the workflows for new repositories is `setup-workflows.sh`.
 repository. It starts with the default workflows and adds the specific ones based on the project type. In case of a filename clash,
 the specific template overwrites the default one (exception: `.gitignore` These files are concatenated).
 
-Use 
+Use
 
 ```bash
 # USE_REPOSITORY
