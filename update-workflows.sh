@@ -46,11 +46,12 @@ function create_commit_and_pr() {
 
   cd "$repo_directory" || exit 7
 
-  git checkout -b update-workflows
+  branch_name="update-workflows-$(date +%s)"
+  git checkout -b "$branch_name"
 
   git add .
   git commit -m "update workflows to latest version"
-  git push --set-upstream origin update-workflows
+  git push --set-upstream origin "$branch_name"
 
   body=$(cat <<EOF
 # Description
@@ -62,7 +63,7 @@ This PR updates all workflows to the latest version.
 Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
-  
+
   gh pr create --title "ci: update workflows to latest version" --body "$body" --base main
   gh pr view --web
 }
