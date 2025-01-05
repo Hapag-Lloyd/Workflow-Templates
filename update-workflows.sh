@@ -129,6 +129,8 @@ shopt -s nullglob
 mkdir -p "$destination_path/.github/workflows"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
 
+cp -pr .config "$destination_path/"
+
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
   cp ".github/workflows/${repository_type}"_* "$destination_path/.github/workflows/"
