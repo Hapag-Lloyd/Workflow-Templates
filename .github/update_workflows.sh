@@ -52,14 +52,14 @@ function create_commit_and_pr() {
   git commit -m "update workflows to latest version"
   git push --set-upstream origin update-workflows
 
-  body=$(cat <<-EOF
-    # Description
+  body=$(cat <<EOF
+# Description
 
-    This PR updates all workflows to the latest version.
+This PR updates all workflows to the latest version.
 
-    # Verification
+# Verification
 
-    Done by the workflows in this feature branch, except for the release workflow.
+Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
@@ -133,6 +133,8 @@ cp .github/workflows/default_* "$destination_path/.github/workflows"
 if [ -f "$destination_path/update-workflows.sh" ]; then
   git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
 fi
+
+cp -pr .config "$destination_path/"
 
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
