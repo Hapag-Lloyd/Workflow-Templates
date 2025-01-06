@@ -24,8 +24,8 @@ jobs:
           script: |
             message = `Hey @${{ github.event.pull_request.user.login }}! 👋
 
-                       Thank you for your contribution to the project. Please refer to the [contribution rules](../blob/main/.github/CONTRIBUTING.md)
-                       for a quick overview of the process.
+                       Thank you for your contribution to the project. Please refer to the
+                       [contribution rules](../blob/main/.github/CONTRIBUTING.md) for a quick overview of the process.
 
                        Make sure that this PR clearly explains:
 
@@ -42,7 +42,8 @@ jobs:
                        Simply add a comment with the command in the first line. If you need to pass more information, separate it
                        with a blank line from the command.
 
-                       _This message was generated automatically. You are welcome to [improve it](https://github.com/Hapag-Lloyd/Workflow-Templates/blob/main/.github/workflows/default_welcome_message_callable.yml)._`
+                       _This message was generated automatically. You are welcome to
+                       [improve it](https://github.com/Hapag-Lloyd/Workflow-Templates/blob/main/.github/workflows/default_welcome_message_callable.yml)._` // yamllint disable-line rule:line-length
 
             // dedent the message
             message = message.replace(/^ +/gm, '')
