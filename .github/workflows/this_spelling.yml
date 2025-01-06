@@ -33,7 +33,7 @@ jobs:
             const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').
                                              findIndex(line => line.startsWith('# Checklist'))).join('\n');
 
-            github.rest.issues.update({
+            github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
@@ -41,8 +41,9 @@ jobs:
             });
 
             // set the PR to ready
-            github.rest.pulls.requestReviewers({
+            github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.issue.number,
-            })
+              issue_number: context.issue.number,
+              draft: false,
+            });
