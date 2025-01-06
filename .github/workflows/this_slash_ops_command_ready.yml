@@ -9,5 +9,5 @@ on:
 
 jobs:
   default:
-    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_slash_ops_command_ready_callable.yml@main
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_slash_ops_command_ready_callable.yml@head
     secrets: inherit
