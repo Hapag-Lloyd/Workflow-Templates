@@ -9,3 +9,45 @@ jobs:
   default:
     uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_spelling_callable.yml@main
     secrets: inherit
+
+  welcome-message:
+    if: ${{ ! endsWith(github.actor, '[bot]') }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            message = `Hey @${{ github.event.pull_request.user.login }}! 👋
+
+                       Thank you for your contribution to the project. Please refer to the [contribution rules](../blob/main/.github/CONTRIBUTING.md)
+                       for a quick overview of the process.
+
+                       Make sure that this PR clearly explains:
+
+                         - the problem being solved
+                         - the best way a reviewer and you can test your changes
+
+                       With submitting this PR you confirm that you hold the rights of the code added and agree that it will
+                       published under this [LICENSE](../blob/main/LICENSE).
+
+                       The following ChatOps commands are supported:
+                         - `/help`: notifies a maintainer to help you out
+                         - `/ready`: marks the PR as ready for review and removes the checklist
+
+                       Simply add a comment with the command in the first line. If you need to pass more information, separate it
+                       with a blank line from the command.
+
+                       _This message was generated automatically. You are welcome to [improve it](https://github.com/Hapag-Lloyd/Workflow-Templates/blob/main/.github/workflows/default_welcome_message_callable.yml)._`
+
+            // dedent the message
+            message = message.replace(/^ +/gm, '')
+
+            // adds a comment to the PR (there is the issue API only which works work PRs too)
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message,
+            })

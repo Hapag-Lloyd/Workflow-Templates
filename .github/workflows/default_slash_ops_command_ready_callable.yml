@@ -32,7 +32,8 @@ jobs:
             });
 
             // remove the checklist paragraph from "# Checklist" to the end of the PR text
-            const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').findIndex(line => line.startsWith('# Checklist'))).join('\n');
+            const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').
+                                             findIndex(line => line.startsWith('# Checklist'))).join('\n');
 
             github.rest.issues.update({
               owner: context.repo.owner,
