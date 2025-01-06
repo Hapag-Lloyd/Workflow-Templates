@@ -1,5 +1,5 @@
 ---
-name: Execute ChatOps command
+name: Execute ChatOps help command
 
 # yamllint disable-line rule:truthy
 on:
