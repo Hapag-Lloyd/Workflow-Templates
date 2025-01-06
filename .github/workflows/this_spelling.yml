@@ -33,8 +33,8 @@ jobs:
                        published under this [LICENSE](../blob/main/LICENSE).
 
                        The following ChatOps commands are supported:
-                         - `/help`: notifies a maintainer to help you out
-                         - `/ready`: marks the PR as ready for review and removes the checklist
+                         - \`/help\`: notifies a maintainer to help you out
+                         - \`/ready\`: marks the PR as ready for review and removes the checklist
 
                        Simply add a comment with the command in the first line. If you need to pass more information, separate it
                        with a blank line from the command.
