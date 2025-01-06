@@ -28,7 +28,7 @@ jobs:
         with:
           list-files: "shell"
           filters: |
-            markdown:
+            dictionaries:
             - added|modified: '.config/dictionaries/*.txt'
     outputs:
       dictionaries: ${{ steps.changes-for-shell.outputs.dictionaries }}

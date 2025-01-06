@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#
+# Based on the idea outlined in https://github.com/streetsidesoftware/cspell/issues/2536#issuecomment-1126077282
+# but with a few modifications to fit the needs of our project.
+#
+
 set -euo pipefail
 
 MISSPELLED_WORDS_PATH="misspelled-words.txt"
@@ -15,14 +20,14 @@ npx cspell . --dot --no-progress --no-summary --unique --words-only --no-exit-co
 # Check the custom dictionaries
 ONE_OR_MORE_FAILURES=0
 for DICTIONARY_NAME in "${DICTIONARY_FILES_TO_CHECK[@]}"; do
-  # Check alphabetically sorted and unique
   echo "Checking for orphaned words in dictionary: $DICTIONARY_NAME"
 
   # ensure the dictionary is sorted and unique
-  sort --ignore-case --unique --check "$DICTIONARY_NAME"
+  sort --ignore-case --unique --check "$DICTIONARY_NAME" > /dev/null
 
   # Check that each word in the dictionary is actually being used
   while IFS= read -r line; do
+    # Remove any trailing newline characters
     line=$(echo "$line" | tr -d '\r\n')
 
     if ! grep "$line" "$MISSPELLED_WORDS_PATH" --ignore-case --silent ; then
