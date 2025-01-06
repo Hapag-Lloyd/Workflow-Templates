@@ -43,7 +43,7 @@ jobs:
                        with a blank line from the command.
 
                        _This message was generated automatically. You are welcome to
-                       [improve it](https://github.com/Hapag-Lloyd/Workflow-Templates/blob/main/.github/workflows/default_welcome_message_callable.yml)._`
+                       [improve it](../blob/main/.github/workflows/default_welcome_message_callable.yml)._`
 
             // dedent the message
             message = message.replace(/^ +/gm, '')
