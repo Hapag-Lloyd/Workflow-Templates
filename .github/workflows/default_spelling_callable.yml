@@ -13,7 +13,6 @@ on:
 jobs:
   cspell:
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
@@ -31,14 +30,9 @@ jobs:
           filters: |
             dictionaries:
             - added|modified: '.config/dictionaries/*.txt'
-    outputs:
-      dictionaries: ${{ steps.changes-for-shell.outputs.dictionaries }}
 
-  validate-dictionaries:
-    continue-on-error: true
-    runs-on: ubuntu-latest
-    if: needs.find-changes-for-shell-output.outputs.dictionaries == 'true'
-    steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - run: .github/workflows/scripts/validate-dictionaries.sh
+        continue-on-error: true
+        if: steps.changes-for-shell.outputs.dictionaries == 'true'
