@@ -39,7 +39,7 @@ jobs:
                        Simply add a comment with the command in the first line. If you need to pass more information, separate it
                        with a blank line from the command.
 
-                       _This message was generated automatically. You are welcome to [improve it](blob/main/.github/workflows/default_welcome_message_callable.yml)._`
+                       _This message was generated automatically. You are welcome to [improve it](/blob/main/.github/workflows/default_welcome_message_callable.yml)._`
 
             // dedent the message
             message = message.replace(/^ +/gm, '')
