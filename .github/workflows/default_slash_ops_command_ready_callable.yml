@@ -24,10 +24,11 @@ jobs:
         with:
           script: |
             // get the PR text and make sure that all items are checked
-            const prText = context.payload.client_payload.github.payload.issue.body;
+            const prText = context.payload.pull_request.body;
+
             prText.split('\n').forEach(line => {
               if (line.startsWith('- [ ]')) {
-                throw new Error('Please check all items in the checklist before marking the PR as ready!');
+                throw new Error('Please check all items in the checklist before marking the PR as ready! Unchecked item: ' + line);
               }
             });
 
@@ -35,16 +36,11 @@ jobs:
             const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').
                                              findIndex(line => line.startsWith('# Checklist'))).join('\n');
 
-            github.rest.issues.update({
+            github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.payload.client_payload.github.payload.issue.number,
+              pull_number: context.issue.number,
               body: prTextWithoutChecklist,
             });
 
-            // set the PR to ready
-            github.rest.pulls.requestReviewers({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.payload.client_payload.github.payload.issue.number,
-            })
+            // set the PR to ready --> this is not possible with the GitHub API, use GraphQL instead
