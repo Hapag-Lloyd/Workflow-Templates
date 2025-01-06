@@ -9,3 +9,39 @@ jobs:
   default:
     uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_spelling_callable.yml@main
     secrets: inherit
+
+  ready-command:
+    name: "ChatOps: /ready"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Create comment
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            // get the PR text and make sure that all items are checked
+            const prText = context.payload.client_payload.github.payload.issue.body;
+            prText.split('\n').forEach(line => {
+              if (line.startsWith('- [ ]')) {
+                throw new Error('Please check all items in the checklist before marking the PR as ready!');
+              }
+            });
+
+            // remove the checklist paragraph from "# Checklist" to the end of the PR text
+            const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').
+                                             findIndex(line => line.startsWith('# Checklist'))).join('\n');
+
+            github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.client_payload.github.payload.issue.number,
+              body: prTextWithoutChecklist,
+            });
+
+            // set the PR to ready
+            github.rest.pulls.requestReviewers({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.client_payload.github.payload.issue.number,
+            })
