@@ -28,7 +28,7 @@ jobs:
 
             prText.split('\n').forEach(line => {
               if (line.startsWith('- [ ]')) {
-                throw new Error('Please check all items in the checklist before marking the PR as ready!');
+                throw new Error('Please check all items in the checklist before marking the PR as ready! Unchecked item: ' + line);
               }
             });
 
