@@ -46,11 +46,12 @@ function create_commit_and_pr() {
 
   cd "$repo_directory" || exit 7
 
-  git checkout -b update-workflows
+  branch_name="update-workflows-$(date +%s)"
+  git checkout -b "$branch_name"
 
   git add .
   git commit -m "update workflows to latest version"
-  git push --set-upstream origin update-workflows
+  git push --set-upstream origin "$branch_name"
 
   body=$(cat <<EOF
 # Description
