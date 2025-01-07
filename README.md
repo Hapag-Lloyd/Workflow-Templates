@@ -27,14 +27,15 @@ all files in case of major changes in the templates.
 - linters for all files
 - PRs are checked for semantic commit titles to ensure an automatic release
 - ChatOps to run workflows from comments
+- a `.config/dictionaries/project.txt` file for the spell checker exceptions
 
 ## For Developers - Repository Layout
 
 1. Add all workflows to `.github/workflows/`, otherwise they can't be referenced from the repositories.
 2. Workflows with `this_` prefix are used for this repository only.
-3. Workflows with `default_` prefix are added to every new repository. Otherwise use the correct prefix for the project type.
+3. Workflows with `default_` prefix are added to every new repository. Otherwise, use the correct prefix for the project type.
 
-The script to set up the workflows for new repositories is `setup-workflows.sh`. It copies the necessary files to the new
+The script to set up the workflows for new repositories is `update-workflows.sh`. It copies the necessary files to the new
 repository. It starts with the default workflows and adds the specific ones based on the project type. In case of a filename clash,
 the specific template overwrites the default one (exception: `.gitignore` These files are concatenated).
 
@@ -50,3 +51,9 @@ Use
 
 in the file to describe the triggers which should be used in the repository. The script will automatically replace the triggers
 marked with `USE_WORKFLOW` which are valid within this repository only.
+
+### Spell Checker
+
+1. Add the words to the `.config/dictionaries/workflow.txt` file.
+2. `.config/dictionaries/project.txt` file is used for the project specific words of the project being set up.
+3. All other dictionaries are managed by the `Repository-Template-*` repositories.
