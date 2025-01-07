@@ -130,6 +130,11 @@ shopt -s nullglob
 mkdir -p "$destination_path/.github/workflows"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
 
+# move the update-workflows.sh script to the correct location (from older releases)
+if [ -f "$destination_path/update-workflows.sh" ]; then
+  git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
+fi
+
 cp -pr .config "$destination_path/"
 
 # we do not have special files for simple GitHub projects, this is handled by the default setup
