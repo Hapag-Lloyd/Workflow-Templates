@@ -46,12 +46,11 @@ function create_commit_and_pr() {
 
   cd "$repo_directory" || exit 7
 
-  branch_name="update-workflows-$(date +%s)"
-  git checkout -b "$branch_name"
+  git checkout -b update-workflows
 
   git add .
   git commit -m "update workflows to latest version"
-  git push --set-upstream origin "$branch_name"
+  git push --set-upstream origin update-workflows
 
   body=$(cat <<EOF
 # Description
@@ -135,7 +134,9 @@ if [ -f "$destination_path/update-workflows.sh" ]; then
   git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
 fi
 
-cp -pr .config "$destination_path/"
+cp -p .config "$destination_path/"
+
+setup_cspell
 
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
