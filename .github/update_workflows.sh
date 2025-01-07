@@ -62,7 +62,7 @@ This PR updates all workflows to the latest version.
 Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
-  
+
   gh pr create --title "ci: update workflows to latest version" --body "$body" --base main
   gh pr view --web
 }
@@ -128,6 +128,11 @@ shopt -s nullglob
 # basic setup for all types
 mkdir -p "$destination_path/.github/workflows"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
+
+# move the update-workflows.sh script to the correct location (from older releases)
+if [ -f "$destination_path/update-workflows.sh" ]; then
+  git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
+fi
 
 cp -pr .config "$destination_path/"
 
