@@ -167,8 +167,9 @@ echo "Updating the workflows in $destination_path"
 shopt -s nullglob
 
 # basic setup for all types
-mkdir -p "$destination_path/.github/workflows"
+mkdir -p "$destination_path/.github/workflows/scripts"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
+cp .github/workflows/scripts/* "$destination_path/.github/workflows/scripts/"
 
 # move the update-workflows.sh script to the correct location (from older releases)
 if [ -f "$destination_path/update-workflows.sh" ]; then
