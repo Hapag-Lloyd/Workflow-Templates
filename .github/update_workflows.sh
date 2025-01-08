@@ -63,7 +63,7 @@ Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
-  gh pr create --title "ci: update workflows to latest version" --body "$body" --base main
+  gh pr create --title "ci(deps): update workflows to latest version" --body "$body" --base main
   gh pr view --web
 }
 
@@ -116,6 +116,47 @@ function ensure_and_set_parameters_or_exit() {
   fi
 }
 
+function ensure_cspell_dictionary() {
+  dictionary=$1
+  if [ ! -f "$destination_path/.config/dictionaries/$dictionary.txt" ]; then
+    cp -p ".config/dictionaries/$dictionary.txt" "$destination_path/.config/dictionaries/"
+  fi
+}
+
+function setup_cspell() {
+  # init the dictionaries
+  if [ ! -d "$destination_path/.config/dictionaries" ]; then
+    cp -pr .config/dictionaries "$destination_path/.config/"
+  fi
+  # this repository, the workflow templates
+  ensure_cspell_dictionary "workflow"
+  # the dictionaries for the specific repository types
+  ensure_cspell_dictionary "maven"
+  ensure_cspell_dictionary "terraform-module"
+  ensure_cspell_dictionary "docker"
+  ensure_cspell_dictionary "simple"
+  ensure_cspell_dictionary "python"
+  # the dictionary for the project
+  ensure_cspell_dictionary "project"
+  # fix the "addWords" setting needed for some IDEs
+  jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' "$destination_path/.config/cspell.json" > "$destination_path/.config/cspell.json.tmp"
+  repository_name=$(basename "$destination_path")
+  if [ "$repository_name" == "Repository-Template-Docker" ]; then
+    jq '(.dictionaryDefinitions[] | select(.name == "docker")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  elif [ "$repository_name" == "Repository-Template-Maven" ]; then
+    jq '(.dictionaryDefinitions[] | select(.name == "maven")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  elif [ "$repository_name" == "Repository-Template-Terraform-Module" ]; then
+    jq '(.dictionaryDefinitions[] | select(.name == "terraform-module")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  elif [ "$repository_name" == "Repository-Template-Simple" ]; then
+    jq '(.dictionaryDefinitions[] | select(.name == "simple")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  elif [ "$repository_name" == "Repository-Template-Python" ]; then
+    jq '(.dictionaryDefinitions[] | select(.name == "python")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  else
+    jq '(.dictionaryDefinitions[] | select(.name == "project")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+  fi
+  rm "$destination_path/.config/cspell.json.tmp"
+}
+
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 ensure_and_set_parameters_or_exit "$@"
@@ -134,7 +175,9 @@ if [ -f "$destination_path/update-workflows.sh" ]; then
   git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
 fi
 
-cp -p .config "$destination_path/"
+mkdir -p "$destination_path/.config"
+# copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
+cp -p .config/*.* "$destination_path/.config/"
 
 setup_cspell
 
