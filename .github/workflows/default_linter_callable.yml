@@ -71,7 +71,6 @@ jobs:
 
   lint-markdown:
     runs-on: ubuntu-latest
-    continue-on-error: true
     if: needs.find-changes-for-shell-output.outputs.markdown == 'true'
     needs: find-changes-for-shell-output
     steps:
@@ -85,7 +84,6 @@ jobs:
 
   lint-workflow:
     runs-on: ubuntu-latest
-    continue-on-error: true
     needs: find-changes-for-shell-output
     if: needs.find-changes-for-shell-output.outputs.workflow == 'true'
     container:
@@ -101,7 +99,6 @@ jobs:
 
   lint-yaml:
     runs-on: ubuntu-latest
-    continue-on-error: true
     needs: find-changes-for-shell-output
     if: needs.find-changes-for-shell-output.outputs.yaml == 'true'
     steps:
@@ -116,7 +113,6 @@ jobs:
 
   lint-json:
     runs-on: ubuntu-latest
-    continue-on-error: true
     if: needs.find-changes.outputs.json == 'true'
     needs: find-changes
     steps:
@@ -131,7 +127,6 @@ jobs:
 
   lint-renovate:
     runs-on: ubuntu-latest
-    continue-on-error: true
     if: needs.find-changes.outputs.renovate-config == 'true'
     needs: find-changes
     strategy:
@@ -155,7 +150,6 @@ jobs:
 
   lint-docker:
     runs-on: ubuntu-latest
-    continue-on-error: true
     needs: find-changes
     if: ${{ needs.find-changes.outputs.dockerfile_files != '[]' && needs.find-changes.outputs.dockerfile_files != '' }}
     strategy:
