@@ -116,31 +116,31 @@ function ensure_and_set_parameters_or_exit() {
   fi
 }
 
-function ensure_cspell_dictionary() {
-  dictionary=$1
-  if [ ! -f "$destination_path/.config/dictionaries/$dictionary.txt" ]; then
-    cp -p ".config/dictionaries/$dictionary.txt" "$destination_path/.config/dictionaries/"
-  fi
-}
-
 function setup_cspell() {
   # init the dictionaries
   if [ ! -d "$destination_path/.config/dictionaries" ]; then
     cp -pr .config/dictionaries "$destination_path/.config/"
   fi
-  # this repository, the workflow templates
-  ensure_cspell_dictionary "workflow"
+  # unknown words for copied workflows
+  cp -p ".config/dictionaries/workflow.txt" "$destination_path/.config/dictionaries/"
+
   # the dictionaries for the specific repository types
-  ensure_cspell_dictionary "maven"
-  ensure_cspell_dictionary "terraform-module"
-  ensure_cspell_dictionary "docker"
-  ensure_cspell_dictionary "simple"
-  ensure_cspell_dictionary "python"
-  # the dictionary for the project
-  ensure_cspell_dictionary "project"
+  cp -p ".config/dictionaries/maven.txt" "$destination_path/.config/dictionaries/"
+  cp -p ".config/dictionaries/terraform-module.txt" "$destination_path/.config/dictionaries/"
+  cp -p ".config/dictionaries/docker.txt" "$destination_path/.config/dictionaries/"
+  cp -p ".config/dictionaries/simple.txt" "$destination_path/.config/dictionaries/"
+  cp -p ".config/dictionaries/python.txt" "$destination_path/.config/dictionaries/"
+
+  # project dictionary for the rest, do not overwrite
+  if [ ! -f "$destination_path/.config/dictionaries/project.txt" ]; then
+    touch "$destination_path/.config/dictionaries/project.txt"
+  fi
+
   # fix the "addWords" setting needed for some IDEs
   jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' "$destination_path/.config/cspell.json" > "$destination_path/.config/cspell.json.tmp"
+
   repository_name=$(basename "$destination_path")
+
   if [ "$repository_name" == "Repository-Template-Docker" ]; then
     jq '(.dictionaryDefinitions[] | select(.name == "docker")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
   elif [ "$repository_name" == "Repository-Template-Maven" ]; then
@@ -154,6 +154,7 @@ function setup_cspell() {
   else
     jq '(.dictionaryDefinitions[] | select(.name == "project")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
   fi
+
   rm "$destination_path/.config/cspell.json.tmp"
 }
 
