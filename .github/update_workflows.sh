@@ -329,7 +329,7 @@ EOF
   sed -i '/USE_WORKFLOW/d' "$file"
   sed -i '/\/USE_WORKFLOW/d' "$file"
 done
-git commit -cam "chore: update workflows to latest version 2"
+git commit -am "chore: update workflows to latest version 2"
 #
 # Remove the prefix from the workflow files
 #
