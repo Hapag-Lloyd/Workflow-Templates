@@ -41,9 +41,6 @@ function restart_script_if_newer_version_available() {
 }
 
 function ensure_repo_preconditions_or_exit() {
-  # TODO
-  return
-
   if [ "$force_execution" == "true" ]; then
     return
   fi
@@ -201,12 +198,10 @@ cd "$repository_path" || exit 8
 echo "Fetching the latest version of the workflows"
 
 latest_template_path=$(mktemp -d -t repository-template-XXXXX)
-# TODO
-gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b kayma/update-workflows -q
+gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
 
-# TODO
 if [ "$force_execution" != "false" ]; then
-  restart_script_if_newer_version_available "$repository_path" "$latest_template_path"fi
+  restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
 fi
 
 echo "Updating the workflows in $repository_path"
@@ -224,8 +219,6 @@ cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
 git ls-files --modified -z .github/workflows/scripts/*.sh .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
 git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
-
-# git update-index --chmod=+x .github/workflows/scripts/*.sh
 
 cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
 cp "$latest_template_path/.github/pull_request_template.md" .github/
@@ -254,7 +247,6 @@ fi
 #
 # Fix the "on" clause in the workflow files, remove all jobs and set a reference to this repository
 #
-
 version_info=$(
   cd "$latest_template_path" || exit 9
 
