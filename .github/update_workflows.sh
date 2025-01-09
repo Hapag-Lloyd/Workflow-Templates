@@ -214,7 +214,12 @@ cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
 echo "Fetching the latest version of the workflows"
+
 latest_template_path=xvü # $(mktemp -p . -d -t repository-template-XXXXX)
+if [ -d "$latest_template_path" ]; then
+  rm -rf "$latest_template_path"
+fi
+
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 # TODO
