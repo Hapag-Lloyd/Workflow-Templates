@@ -383,8 +383,6 @@ do
   done
 done
 
-cp .github/workflows/pull_request.yml before.yml1
-
 create_commit_and_pr .
 
 rm -rf "$latest_template_path"

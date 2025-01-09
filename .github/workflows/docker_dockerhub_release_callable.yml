@@ -27,7 +27,7 @@ on:
 # /USE_WORKFLOW
 # USE_REPOSITORY
 ## yamllint disable-line rule:truthy
-# on: release
+#on: release
 # /USE_REPOSITORY
 
 jobs:
