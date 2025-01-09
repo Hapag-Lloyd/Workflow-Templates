@@ -5,6 +5,7 @@ cli_parameters="$*"
 repository_type=""
 release_type="auto"
 force_execution="false"
+repository_path=$(pwd)
 
 function ensure_prerequisites_or_exit() {
   if ! command -v yq &> /dev/null; then
@@ -35,7 +36,7 @@ function ensure_running_on_the_newest_copy_or_restart() {
     cp ".github/update_workflows.sh" "$temp_script"
 
     # shellcheck disable=SC2086 # original script parameters are passed to the new script
-    bash "$temp_script" $cli_parameters --force
+    bash "$temp_script" $cli_parameters --force "$repository_path"
     exit 0
   fi
 }
@@ -110,6 +111,8 @@ function ensure_and_set_parameters_or_exit() {
     case $1 in
       -f|--force)
         force_execution="true"
+        repository_path=$2
+        shift
         shift
         ;;
       --release-type)
@@ -206,9 +209,11 @@ ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 
+cd "$repository_path" || exit 8
+echo "Updating the workflows in $repository_path"
+
 echo "Fetching the latest version of the workflows"
-latest_template_path=$(mktemp -p . -d -t repository-template-XXXXX)
-echo $latest_template_path
+latest_template_path=$(mktemp -d -t repository-template-XXXXX)
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
