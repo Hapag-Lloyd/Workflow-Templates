@@ -6,6 +6,7 @@ repository_type=""
 release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
+dry_run="false"
 
 branch_name="update-workflows-$(date +%s)"
 
@@ -64,11 +65,12 @@ function ensure_repo_preconditions_or_exit() {
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 <repository-type> --release-type auto|manual"
+  echo "Usage: $0 <repository-type> --release-type auto|manual --dry-run"
   echo "repository-type: docker, github-only, maven, terraform_module"
-  echo "release-type: (optional)"
+  echo "--release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
   echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
+  echo "--dry-run: (optional) do not create a PR"
 
   exit 1
 }
@@ -89,8 +91,12 @@ Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
-  gh pr create --title "ci(deps): update workflows to latest version" --body "$body" --base main
-  gh pr view --web
+  if [ "$dry_run" == "true" ]; then
+    echo "Dry run, no PR created"
+  else
+    gh pr create --title "ci(deps): update workflows to latest version" --body "$body" --base main
+    gh pr view --web
+  fi
 }
 
 function ensure_and_set_parameters_or_exit() {
