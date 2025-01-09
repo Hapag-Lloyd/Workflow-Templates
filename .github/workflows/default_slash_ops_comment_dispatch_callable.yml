@@ -22,8 +22,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-type: pull-request
           reactions: true
-          static-args: |
-            pr_id="${{ github.event.issue.id }}"
           commands: |
             help
             ready
