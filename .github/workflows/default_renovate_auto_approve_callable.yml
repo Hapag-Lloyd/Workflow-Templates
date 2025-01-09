@@ -10,7 +10,7 @@ on:
         required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
-# yamllint disable-line rule:truthy
+# # yamllint disable-line rule:truthy
 # on: pull_request_target
 # /USE_REPOSITORY
 
