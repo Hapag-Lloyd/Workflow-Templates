@@ -215,17 +215,13 @@ shopt -s nullglob
 # basic setup for all types
 mkdir -p ".github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
-
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
-git ls-files --modified -z .github/workflows/scripts/*.sh .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
-git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
 
-cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
 cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
-
 cp "$latest_template_path/.github/update_workflows.sh" .github/
-git ls-files --modified -z .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
+
+git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
 git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
 
 mkdir -p .config
