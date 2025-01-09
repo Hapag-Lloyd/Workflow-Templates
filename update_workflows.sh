@@ -26,13 +26,13 @@ function restart_script_if_newer_version_available() {
   latest_template_path=$2
 
   current_sha=$(sha256sum "$repository_path/.github/update_workflows.sh" | cut -d " " -f 1)
-  new_sha=$(sha256sum "$latest_template_path/.github/update_workflows.sh" | cut -d " " -f 1)
+  new_sha=$(sha256sum "$latest_template_path/update_workflows.sh" | cut -d " " -f 1)
 
   if [ "$current_sha" != "$new_sha" ]; then
     echo "Restarting the script with the latest version ..."
 
     temp_script=$(mktemp -t update_workflows-XXXXX)
-    cp "$latest_template_path/.github/update_workflows.sh" "$temp_script"
+    cp "$latest_template_path/update_workflows.sh" "$temp_script"
 
     # shellcheck disable=SC2086 # original script parameters are passed to the new script
     bash "$temp_script" $cli_parameters --force "$repository_path"
@@ -198,7 +198,7 @@ cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts
 
 cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
-cp "$latest_template_path/.github/update_workflows.sh" .github/
+cp "$latest_template_path/update_workflows.sh" .github/
 
 git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
 git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
