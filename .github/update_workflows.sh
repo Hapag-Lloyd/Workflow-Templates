@@ -7,6 +7,8 @@ release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
 
+branch_name="update-workflows-$(date +%s)"
+
 function ensure_prerequisites_or_exit() {
   if ! command -v yq &> /dev/null; then
     echo "yq is not installed. https://github.com/mikefarah/yq"
@@ -19,21 +21,18 @@ function ensure_prerequisites_or_exit() {
   fi
 }
 
-function ensure_running_on_the_newest_copy_or_restart() {
-  if [ "$force_execution" == "true" ]; then
-    return
-  fi
+function restart_script_if_newer_version_available() {
+  repository_path=$1
+  latest_template_path=$2
 
-  # get list of changed files
-  changed_files=$(git diff --name-only)
+  current_sha=$(sha256sum "$repository_path/.github/update_workflows.sh" | cut -d " " -f 1)
+  new_sha=$(sha256sum "$latest_template_path/.github/update_workflows.sh" | cut -d " " -f 1)
 
-  # check if the script is part of the changed files
-  if ! echo "$changed_files" | grep -q "update_workflows.sh"; then
+  if [ "$current_sha" != "$new_sha" ]; then
     echo "Restarting the script with the latest version ..."
 
-    # copy script to temp file and execute it
     temp_script=$(mktemp -t update_workflows-XXXXX)
-    cp ".github/update_workflows.sh" "$temp_script"
+    cp "$latest_template_path/.github/update_workflows.sh" "$temp_script"
 
     # shellcheck disable=SC2086 # original script parameters are passed to the new script
     bash "$temp_script" $cli_parameters --force "$repository_path"
@@ -47,12 +46,6 @@ function ensure_repo_preconditions_or_exit() {
 
   if [ "$force_execution" == "true" ]; then
     return
-  fi
-
-  # ensure main branch
-  if [ "$(git branch --show-current)" != "main" ]; then
-    echo "The current branch is not main. Please switch to the main branch."
-    exit 1
   fi
 
   # ensure a clean working directory
@@ -79,13 +72,6 @@ function show_help_and_exit() {
 }
 
 function create_commit_and_pr() {
-  local repo_directory=$1
-
-  cd "$repo_directory" || exit 7
-
-  branch_name="update-workflows-$(date +%s)"
-  git checkout -b "$branch_name"
-
   git add .
   git commit -m "update workflows to latest version"
   git push --set-upstream origin "$branch_name"
@@ -211,23 +197,22 @@ ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 
 cd "$repository_path" || exit 8
-echo "Updating the workflows in $repository_path"
 
 echo "Fetching the latest version of the workflows"
 
-latest_template_path=xvü # $(mktemp -p . -d -t repository-template-XXXXX)
-if [ -d "$latest_template_path" ]; then
-  rm -rf "$latest_template_path"
-fi
-
-echo "i $(pwd)"
-gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
+latest_template_path=$(mktemp -d -t repository-template-XXXXX)
+gh repo clone -q https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 # TODO
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
 
-echo "i $(pwd)"
-ls -lad $(pwd)/*
+restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
+
+echo "Updating the workflows in $repository_path"
+
+git fetch origin main
+git checkout -b "$branch_name" origin/main
+
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
 
@@ -236,6 +221,8 @@ mkdir -p ".github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
+# if .github/workflows/scripts/*.sh is added/modified, do update the index
+
 # TODO
 # git update-index --chmod=+x .github/workflows/scripts/*.sh
 
@@ -271,6 +258,7 @@ rm -rf "$latest_template_path"
 #
 
 x=$(
+  echo "i $(pwd)" > /c/hlag/data/git/hapag-lloyd/Repository-Template-Python/x
   cd "$latest_template_path" || exit 9
 
   # add a reference to this repository which holds the workflow
