@@ -207,7 +207,7 @@ ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 
 echo "Fetching the latest version of the workflows"
-latest_template_path=$(pwd)/$(mktemp -d -t repository-template-XXXXX)
+latest_template_path=$(mktemp -p . -d -t repository-template-XXXXX)
 echo $latest_template_path
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
