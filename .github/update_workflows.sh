@@ -304,7 +304,7 @@ EOF
   fi
 
   # remove the comment char for all lines between USE_REPOSITORY and /USE_REPOSITORY in the file
-  sed -i '/USE_REPOSITORY/,/\/USE_REPOSITORY/s/^#//' "$file"
+  sed -i '/USE_REPOSITORY/,/\/USE_REPOSITORY/s/^# //' "$file"
 
   # remove the everything between USE_WORKFLOW and /USE_WORKFLOW
   sed -i '/USE_WORKFLOW/,/\/USE_WORKFLOW/d' "$file"
