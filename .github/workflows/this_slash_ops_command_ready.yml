@@ -8,38 +8,6 @@ on:
       - ready-command
 
 jobs:
-  ready-command:
-    name: "ChatOps: /ready"
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Create comment
-        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
-        with:
-          script: |
-            // get the PR text and make sure that all items are checked
-            console.log(context);
-            const prText = ""; //context.payload.pull_request.body;
-
-            prText.split('\n').forEach(line => {
-              if (line.startsWith('- [ ]')) {
-                throw new Error('Please check all items in the checklist before marking the PR as ready! Unchecked item: ' + line);
-              }
-            });
-
-            // remove the checklist paragraph from "# Checklist" to the end of the PR text
-            // remove HTML comments
-            const cleanPrText = prText.split('\n').slice(0, prText.split('\n').
-                                  findIndex(line => line.startsWith('# Checklist'))).join('\n').
-                                  replace(/<!--[\s\S]*?-->/g, '');
-
-            // update the PR text
-            github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              body: cleanPrText,
-            });
-
-            // set the PR to ready --> this is not possible with the GitHub API, use GraphQL instead
+  default:
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_slash_ops_command_ready_callable.yml@main
+    secrets: inherit
