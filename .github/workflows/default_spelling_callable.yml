@@ -20,6 +20,7 @@ jobs:
       - uses: streetsidesoftware/cspell-action@ef95dc49d631fc2a9e9ea089ae2b2127b7c4588e # v6.10.0
         with:
           config: .config/cspell.json
+          verbose: true
 
   validate-dictionaries:
     runs-on: ubuntu-latest
