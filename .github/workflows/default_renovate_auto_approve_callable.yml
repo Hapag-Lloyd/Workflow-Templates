@@ -2,15 +2,15 @@
 name: Approve all Renovate PRs automatically
 
 # yamllint disable-line rule:truthy
+# USE_WORKFLOW
 on:
-  # USE_WORKFLOW
   workflow_call:
     secrets:
       PAT_FOR_PR_AUTO_APPROVAL:
         required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
-#  pull_request_target
+# on: pull_request_target
 # /USE_REPOSITORY
 
 jobs:

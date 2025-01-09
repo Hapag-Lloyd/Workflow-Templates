@@ -2,12 +2,12 @@
 name: Build Java PR
 
 # yamllint disable-line rule:truthy
+# USE_WORKFLOW
 on:
-  # USE_WORKFLOW
   workflow_call:
 # /USE_WORKFLOW
 # USE_REPOSITORY
-#  pull_request:
+# on: pull_request
 # /USE_REPOSITORY
 
 jobs:

@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-destination_path=""
+cli_parameters="$*"
 repository_type=""
 release_type="auto"
+force_execution="false"
 
 function ensure_prerequisites_or_exit() {
   if ! command -v yq &> /dev/null; then
@@ -17,7 +18,33 @@ function ensure_prerequisites_or_exit() {
   fi
 }
 
+function ensure_running_on_the_newest_copy_or_restart() {
+  if [ "$force_execution" == "true" ]; then
+    return
+  fi
+
+  # get list of changed files
+  changed_files=$(git diff --name-only)
+
+  # check if the script is part of the changed files
+  if ! echo "$changed_files" | grep -q "update_workflows.sh"; then
+    echo "Restarting the script with the latest version ..."
+
+    # copy script to temp file and execute it
+    temp_script=$(mktemp -t update_workflows-XXXXX)
+    cp ".github/update_workflows.sh" "$temp_script"
+
+    # shellcheck disable=SC2086 # original script parameters are passed to the new script
+    bash "$temp_script" $cli_parameters --force
+    exit 0
+  fi
+}
+
 function ensure_repo_preconditions_or_exit() {
+  if [ "$force_execution" == "true" ]; then
+    return
+  fi
+
   # ensure main branch
   if [ "$(git branch --show-current)" != "main" ]; then
     echo "The current branch is not main. Please switch to the main branch."
@@ -29,10 +56,16 @@ function ensure_repo_preconditions_or_exit() {
     echo "The working directory is not clean. Please use a clean copy so no unintended changes are merged."
     exit 1
   fi
+
+  # ensure top level directory of the repository
+  if [ ! -d .github ]; then
+    echo "The script must be executed from the top level directory of the repository."
+    exit 1
+  fi
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 <path-to-new-repo> <repository-type> --release-type auto|manual"
+  echo "Usage: $0 <repository-type> --release-type auto|manual"
   echo "repository-type: docker, github-only, maven, terraform_module"
   echo "release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
@@ -46,11 +79,12 @@ function create_commit_and_pr() {
 
   cd "$repo_directory" || exit 7
 
-  git checkout -b update-workflows
+  branch_name="update-workflows-$(date +%s)"
+  git checkout -b "$branch_name"
 
   git add .
   git commit -m "update workflows to latest version"
-  git push --set-upstream origin update-workflows
+  git push --set-upstream origin "$branch_name"
 
   body=$(cat <<EOF
 # Description
@@ -72,6 +106,10 @@ function ensure_and_set_parameters_or_exit() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
+      -f|--force)
+        force_execution="true"
+        shift
+        ;;
       --release-type)
         release_type=$2
         shift
@@ -90,19 +128,11 @@ function ensure_and_set_parameters_or_exit() {
 
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-  # check for 3 mandatory positional arguments
-  if [ "${#POSITIONAL_ARGS[@]}" -ne 2 ]; then
+    if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
     show_help_and_exit
   fi
 
-  destination_path=$1
-  repository_type=$2
-
-  # check if the directory exists
-  if [ ! -d "$destination_path" ]; then
-    echo "The repository $destination_path does not exist."
-    exit 2
-  fi
+  repository_type=$1
 
   # check for correct type: docker, github-only, maven, terraform_module
   if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ]; then
@@ -117,92 +147,111 @@ function ensure_and_set_parameters_or_exit() {
 }
 
 function setup_cspell() {
+  latest_template_path=$1
+
   # init the dictionaries
-  if [ ! -d "$destination_path/.config/dictionaries" ]; then
-    cp -pr .config/dictionaries "$destination_path/.config/"
+  if [ ! -d .config/dictionaries ]; then
+    cp -pr "$latest_template_path/.config/dictionaries" .config/
   fi
   # unknown words for copied workflows
-  cp -p ".config/dictionaries/workflow.txt" "$destination_path/.config/dictionaries/"
+  cp -p "$latest_template_path/.config/dictionaries/workflow.txt" .config/dictionaries/
 
-  # the dictionaries for the specific repository types
-  cp -p ".config/dictionaries/maven.txt" "$destination_path/.config/dictionaries/"
-  cp -p ".config/dictionaries/terraform-module.txt" "$destination_path/.config/dictionaries/"
-  cp -p ".config/dictionaries/docker.txt" "$destination_path/.config/dictionaries/"
-  cp -p ".config/dictionaries/simple.txt" "$destination_path/.config/dictionaries/"
-  cp -p ".config/dictionaries/python.txt" "$destination_path/.config/dictionaries/"
+  # the dictionaries for the specific repository types, managed by other repositories
+  if [ ! -f .config/dictionaries/maven.txt ]; then
+      touch .config/dictionaries/maven.txt
+  fi
+  if [ ! -f .config/dictionaries/terraform-module.txt ]; then
+      touch .config/dictionaries/terraform-module.txt
+  fi
+  if [ ! -f .config/dictionaries/docker.txt ]; then
+      touch .config/dictionaries/docker.txt
+  fi
+  if [ ! -f .config/dictionaries/simple.txt ]; then
+      touch .config/dictionaries/simple.txt
+  fi
+  if [ ! -f .config/dictionaries/python.txt ]; then
+      touch .config/dictionaries/python.txt
+  fi
 
   # project dictionary for the rest, do not overwrite
-  if [ ! -f "$destination_path/.config/dictionaries/project.txt" ]; then
-    touch "$destination_path/.config/dictionaries/project.txt"
+  if [ ! -f .config/dictionaries/project.txt ]; then
+    touch .config/dictionaries/project.txt
   fi
 
   # fix the "addWords" setting needed for some IDEs
-  jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' "$destination_path/.config/cspell.json" > "$destination_path/.config/cspell.json.tmp"
+  jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' .config/cspell.json > .config/cspell.json.tmp
 
-  repository_name=$(basename "$destination_path")
+  repository_name=$(basename "$(pwd)")
 
   if [ "$repository_name" == "Repository-Template-Docker" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "docker")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "docker")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   elif [ "$repository_name" == "Repository-Template-Maven" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "maven")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "maven")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   elif [ "$repository_name" == "Repository-Template-Terraform-Module" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "terraform-module")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "terraform-module")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   elif [ "$repository_name" == "Repository-Template-Simple" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "simple")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "simple")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   elif [ "$repository_name" == "Repository-Template-Python" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "python")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "python")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   else
-    jq '(.dictionaryDefinitions[] | select(.name == "project")).addWords |= true' "$destination_path/.config/cspell.json.tmp" > "$destination_path/.config/cspell.json"
+    jq '(.dictionaryDefinitions[] | select(.name == "project")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
   fi
 
-  rm "$destination_path/.config/cspell.json.tmp"
+  rm .config/cspell.json.tmp
 }
 
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 ensure_and_set_parameters_or_exit "$@"
 
-echo "Updating the workflows in $destination_path"
+echo "Fetching the latest version of the workflows"
+latest_template_path=$(mktemp -d -t repository-template-XXXXX)
+gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
+
+echo "Updating the workflows in current project"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
 
 # basic setup for all types
-mkdir -p "$destination_path/.github/workflows/scripts"
-cp .github/workflows/default_* "$destination_path/.github/workflows"
-cp .github/workflows/scripts/* "$destination_path/.github/workflows/scripts/"
+mkdir -p "$.github/workflows/scripts"
+cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
-cp .github/.pre-commit-config.yaml "$destination_path/.github/"
-cp .github/pull_request_template.md "$destination_path/.github/"
-cp .github/renovate.json5 "$destination_path/.github/"
+cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
+git update-index --chmod=+x .github/workflows/scripts/*.sh
 
-# move the update-workflows.sh script to the correct location (from older releases)
-if [ -f "$destination_path/update-workflows.sh" ]; then
-  git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
-fi
+cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
+cp "$latest_template_path/.github/pull_request_template.md" .github/
+cp "$latest_template_path/.github/renovate.json5" .github/
 
-mkdir -p "$destination_path/.config"
+cp "$latest_template_path/.github/update_workflows.sh" .github/
+git update-index --chmod=+x .github/update_workflows.sh
+ensure_running_on_the_newest_copy_or_restart
+
+mkdir -p .config
 # copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
-cp -p .config/*.* "$destination_path/.config/"
+cp -p "$latest_template_path/.config/"*.* .config/
 
-setup_cspell
+setup_cspell "$latest_template_path"
 
 # we do not have special files for simple GitHub projects, this is handled by the default setup
 if [ "$repository_type" != "github-only" ]; then
-  cp ".github/workflows/${repository_type}"_* "$destination_path/.github/workflows/"
+  cp "$latest_template_path/.github/workflows/${repository_type}"_* .github/workflows/
 fi
 
 # setup the release workflow
 if [ "$release_type" == "manual" ]; then
-  rm "$destination_path/.github/workflows/"default*release*_callable.yml
+  rm .github/workflows/default*release*_callable.yml
 fi
+
+rm -rf "$latest_template_path"
 
 #
 # Fix the "on" clause in the workflow files, remove all jobs and set a reference to this repository
 #
 
 # iterate over each file in the directory
-for file in "$destination_path"/.github/workflows/*.yml
+for file in .github/workflows/*.yml
 do
   base_name=$(basename "$file")
 
@@ -270,7 +319,7 @@ done
 prefixes=("default_" "terraform_module_" "docker_" "maven_")
 
 # iterate over each file in the directory
-for file in "$destination_path"/.github/workflows/*.yml
+for file in .github/workflows/*.yml
 do
   # get the base name of the file
   base_name=$(basename "$file")
@@ -284,7 +333,7 @@ do
       new_name=${base_name#"$prefix"}
 
       # rename the file
-      mv "$file" "$destination_path/.github/workflows/$new_name"
+      mv "$file" ".github/workflows/$new_name"
 
       # break the loop as the prefix has been found and removed
       break
@@ -298,7 +347,7 @@ done
 suffixes=("_callable.yml")
 
 # iterate over each file in the directory
-for file in "$destination_path"/.github/workflows/*.yml
+for file in .github/workflows/*.yml
 do
   # get the base name of the file
   base_name=$(basename "$file")
@@ -312,7 +361,7 @@ do
       new_name="${base_name%"$suffix"}.yml"
 
       # rename the file
-      mv "$file" "$destination_path/.github/workflows/$new_name"
+      mv "$file" ".github/workflows/$new_name"
 
       # break the loop as the suffix has been found and removed
       break
@@ -320,4 +369,4 @@ do
   done
 done
 
-create_commit_and_pr "$destination_path"
+create_commit_and_pr .
