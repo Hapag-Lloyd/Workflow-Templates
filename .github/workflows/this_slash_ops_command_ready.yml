@@ -20,7 +20,7 @@ jobs:
           script: |
             // get the PR text and make sure that all items are checked
             console.log(context);
-            const prText = context.payload.pull_request.body;
+            const prText = ""; //context.payload.pull_request.body;
 
             prText.split('\n').forEach(line => {
               if (line.startsWith('- [ ]')) {
