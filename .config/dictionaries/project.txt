@@ -1,6 +1,7 @@
 amannn
 aquasecurity
 buildx
+conventionalcommits
 cpus
 dockerhub
 dorny
