@@ -22,7 +22,7 @@ ONE_OR_MORE_FAILURES=0
 for DICTIONARY_NAME in "${DICTIONARY_FILES_TO_CHECK[@]}"; do
   echo "Checking for orphaned words in dictionary: $DICTIONARY_NAME"
 
-  # ensure the dictionary is sorted and unique
+  # ensure the dictionary is sorted and unique, fails if not
   sort --ignore-case --unique --check "$DICTIONARY_NAME" > /dev/null
 
   # Check that each word in the dictionary is actually being used
