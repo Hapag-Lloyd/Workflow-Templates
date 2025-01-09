@@ -172,6 +172,7 @@ mkdir -p "$destination_path/.github/workflows/scripts"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
 cp .github/workflows/scripts/* "$destination_path/.github/workflows/scripts/"
 
+cp .github/.pre-commit-config.yaml "$destination_path/.github/"
 cp .github/pull_request_template.md "$destination_path/.github/"
 cp .github/renovate.json5 "$destination_path/.github/"
 
