@@ -208,6 +208,7 @@ ensure_repo_preconditions_or_exit
 
 echo "Fetching the latest version of the workflows"
 latest_template_path=$(mktemp -d -t repository-template-XXXXX)
+echo $latest_template_path
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
@@ -258,10 +259,7 @@ rm -rf "$latest_template_path"
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
 do
-  echo $latest_template_path
   version_reference=$(
-    echo $latest_template_path
-    exit 0
     cd "$latest_template_path" || exit 9
 
     # add a reference to this repository which holds the workflow
@@ -272,7 +270,6 @@ do
   )
 
   # parse the values from the subshell
-  echo $version_reference
   commit_sha=$(echo "$version_reference" | cut -d' ' -f1)
   tag=$(echo "$version_reference" | cut -d' ' -f2)
 
