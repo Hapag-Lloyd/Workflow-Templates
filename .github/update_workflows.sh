@@ -172,6 +172,10 @@ mkdir -p "$destination_path/.github/workflows/scripts"
 cp .github/workflows/default_* "$destination_path/.github/workflows"
 cp .github/workflows/scripts/* "$destination_path/.github/workflows/scripts/"
 
+cp .github/.pre-commit-config.yaml "$destination_path/.github/"
+cp .github/pull_request_template.md "$destination_path/.github/"
+cp .github/renovate.json5 "$destination_path/.github/"
+
 # move the update-workflows.sh script to the correct location (from older releases)
 if [ -f "$destination_path/update-workflows.sh" ]; then
   git mv -f "$destination_path/update-workflows.sh" "$destination_path/.github/update_workflows.sh"
