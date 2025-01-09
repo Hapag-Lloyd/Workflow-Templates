@@ -18,20 +18,15 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - run: |
-          npx cspell trace mktemp
-          npx cspell . -c .config/cspell.json --dot
-
-      - uses: streetsidesoftware/cspell-action@ef95dc49d631fc2a9e9ea089ae2b2127b7c4588e # v6.10.0
-        with:
-          config: .config/cspell.json
-          verbose: true
-          incremental_files_only: false
-          files: "**/*"
-          check_dot_files: true
+          # renovate: datasource=github-releases depName=streetsidesoftware/cspell
+          cspell_version="v8.17.1"
+          npx cspell@${cspell_version:1} . -c .config/cspell.json --dot
 
   validate-dictionaries:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: changes-for-shell
         with:
@@ -39,8 +34,6 @@ jobs:
           filters: |
             dictionaries:
             - added|modified: '.config/dictionaries/*.txt'
-
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - run: .github/workflows/scripts/check_dictionaries.sh
         if: steps.changes-for-shell.outputs.dictionaries == 'true'
