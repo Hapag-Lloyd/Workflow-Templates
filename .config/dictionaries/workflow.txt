@@ -1,4 +1,3 @@
 codeowners
 conventionalcommits
-datasource
 hapag
