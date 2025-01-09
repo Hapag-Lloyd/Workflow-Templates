@@ -24,8 +24,12 @@ jobs:
         with:
           script: |
             // get the PR text and make sure that all items are checked
-            console.log(context);
-            const prText = context.payload.pull_request.body;
+            const pr = await github.rest.pulls.get({
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.client_payload.pull_request.number,
+            });
+            const prText = pr.date.body;
 
             prText.split('\n').forEach(line => {
               if (line.startsWith('- [ ]')) {
@@ -41,9 +45,9 @@ jobs:
 
             // update the PR text
             github.rest.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
+              owner: context.payload.repository.owner.login,
+              repo: context.payload.repository.name,
+              pull_number: context.payload.client_payload.pull_request.number,
               body: cleanPrText,
             });
 
