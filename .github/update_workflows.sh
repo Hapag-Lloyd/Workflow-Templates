@@ -227,7 +227,7 @@ gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_tem
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
 
 echo "i $(pwd)"
-
+ls -lad $(pwd)
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
 
