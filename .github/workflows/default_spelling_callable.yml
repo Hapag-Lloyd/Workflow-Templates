@@ -22,6 +22,7 @@ jobs:
           config: .config/cspell.json
           verbose: true
           incremental_files_only: false
+          files: "**/*"
 
   validate-dictionaries:
     runs-on: ubuntu-latest
