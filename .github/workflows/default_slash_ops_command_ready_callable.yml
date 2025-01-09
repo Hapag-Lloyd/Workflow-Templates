@@ -33,14 +33,17 @@ jobs:
             });
 
             // remove the checklist paragraph from "# Checklist" to the end of the PR text
-            const prTextWithoutChecklist = prText.split('\n').slice(0, prText.split('\n').
-                                             findIndex(line => line.startsWith('# Checklist'))).join('\n');
+            const cleanPrText = prText.split('\n').slice(0, prText.split('\n').
+                                  findIndex(line => line.startsWith('# Checklist'))).join('\n');
+
+            // remove HTML comments from the PR text
+            cleanPrText = cleanPrText.replace(/<!--[\s\S]*?-->/g, '');
 
             github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.issue.number,
-              body: prTextWithoutChecklist,
+              body: cleanPrText,
             });
 
             // set the PR to ready --> this is not possible with the GitHub API, use GraphQL instead
