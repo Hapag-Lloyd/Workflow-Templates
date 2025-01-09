@@ -23,6 +23,7 @@ jobs:
           verbose: true
           incremental_files_only: false
           files: "**/*"
+          check_dot_files: true
 
   validate-dictionaries:
     runs-on: ubuntu-latest
