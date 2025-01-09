@@ -232,8 +232,6 @@ cp "$latest_template_path/.github/update_workflows.sh" .github/
 git ls-files --modified -z .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
 git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
 
-# git update-index --chmod=+x .github/update_workflows.sh
-
 mkdir -p .config
 # copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
 cp -p "$latest_template_path/.config/"*.* .config/
@@ -249,8 +247,6 @@ fi
 if [ "$release_type" == "manual" ]; then
   rm .github/workflows/default*release*_callable.yml
 fi
-
-rm -rf "$latest_template_path"
 
 #
 # Fix the "on" clause in the workflow files, remove all jobs and set a reference to this repository
@@ -386,3 +382,5 @@ do
 done
 
 create_commit_and_pr .
+
+rm -rf "$latest_template_path"
