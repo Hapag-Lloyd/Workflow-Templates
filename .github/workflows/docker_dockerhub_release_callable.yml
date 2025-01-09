@@ -6,7 +6,7 @@ name: Build & Push Docker Image
 # (see https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases)
 
 # USE_WORKFLOW
-# # yamllint disable-line rule:truthy
+## yamllint disable-line rule:truthy
 on:
   workflow_call:
     inputs:
@@ -26,7 +26,7 @@ on:
         default: false
 # /USE_WORKFLOW
 # USE_REPOSITORY
-# # yamllint disable-line rule:truthy
+## yamllint disable-line rule:truthy
 # on: release
 # /USE_REPOSITORY
 

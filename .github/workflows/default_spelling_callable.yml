@@ -2,12 +2,12 @@
 name: Check spelling
 
 # USE_WORKFLOW
-# # yamllint disable-line rule:truthy
+## yamllint disable-line rule:truthy
 on:
   workflow_call:
 # /USE_WORKFLOW
 # USE_REPOSITORY
-# # yamllint disable-line rule:truthy
+## yamllint disable-line rule:truthy
 # on: pull_request
 # /USE_REPOSITORY
 
