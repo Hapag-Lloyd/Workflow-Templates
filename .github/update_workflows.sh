@@ -213,7 +213,7 @@ cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
 echo "Fetching the latest version of the workflows"
-latest_template_path=$(mktemp -d -t repository-template-XXXXX)
+latest_template_path=$(mktemp -p . -d -t repository-template-XXXXX)
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
