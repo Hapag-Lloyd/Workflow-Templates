@@ -1,13 +1,14 @@
 ---
 name: Lint files
 
-# yamllint disable-line rule:truthy
+# USE_WORKFLOW
+## yamllint disable-line rule:truthy
 on:
-  # USE_WORKFLOW
   workflow_call:
 # /USE_WORKFLOW
 # USE_REPOSITORY
-#  pull_request:
+## yamllint disable-line rule:truthy
+#on: pull_request
 # /USE_REPOSITORY
 
 jobs:

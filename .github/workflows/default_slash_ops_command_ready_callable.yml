@@ -33,12 +33,12 @@ jobs:
             });
 
             // remove the checklist paragraph from "# Checklist" to the end of the PR text
+            // remove HTML comments
             const cleanPrText = prText.split('\n').slice(0, prText.split('\n').
-                                  findIndex(line => line.startsWith('# Checklist'))).join('\n');
+                                  findIndex(line => line.startsWith('# Checklist'))).join('\n').
+                                  replace(/<!--[\s\S]*?-->/g, '');
 
-            // remove HTML comments from the PR text
-            cleanPrText = cleanPrText.replace(/<!--[\s\S]*?-->/g, '');
-
+            // update the PR text
             github.rest.pulls.update({
               owner: context.repo.owner,
               repo: context.repo.repo,

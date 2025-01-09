@@ -1,9 +1,9 @@
 ---
 name: Terraform
 
-# yamllint disable-line rule:truthy
+# USE_WORKFLOW
+## yamllint disable-line rule:truthy
 on:
-  # USE_WORKFLOW
   workflow_call:
     secrets:
       TFLINT_ROLE_ARN:
@@ -12,7 +12,8 @@ on:
         required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
-#  pull_request:
+## yamllint disable-line rule:truthy
+#on: pull_request
 # /USE_REPOSITORY
 
 permissions:

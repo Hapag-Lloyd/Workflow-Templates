@@ -1,7 +1,7 @@
 {
   "version": "0.2",
   "language": "en",
-  "ignorePaths": [".idea"],
+  "ignorePaths": [".git/", ".idea/", ".config/dictionaries/"],
   "dictionaries": [
     "workflow",
     "maven",
@@ -14,8 +14,7 @@
   "dictionaryDefinitions": [
     {
       "name": "workflow",
-      "path": "dictionaries/workflow.txt",
-      "addWords": true
+      "path": "dictionaries/workflow.txt"
     },
     {
       "name": "maven",
@@ -39,7 +38,8 @@
     },
     {
       "name": "project",
-      "path": "dictionaries/project.txt"
+      "path": "dictionaries/project.txt",
+      "addWords": true
     }
   ]
 }

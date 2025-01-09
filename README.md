@@ -4,17 +4,18 @@ This repository stores templates used to set up workflows for new repositories.
 
 ## Set up a new repository
 
-Clone this repository to your disk and run `setup-workflows.sh`. It copies the necessary files to the correct
-locations in your new repository.
-
 ```bash
-./update-workflows.sh <path-to-new-repository> <type>
+git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git workflow-templates
+cp workflow-templates/update_workflows.sh <path-to-new-repository>/
+rm -rf workflow-templates
+
+cd <path-to-new-repository>
+./update_workflows.sh <type>
+rm update_workflows.sh
 ```
 
 Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
 all files in case of major changes in the templates.
-
-:warning: Make sure to run the script from the latest `main` branch to get the most recent templates.
 
 ## What you get
 
@@ -35,7 +36,7 @@ all files in case of major changes in the templates.
 2. Workflows with `this_` prefix are used for this repository only.
 3. Workflows with `default_` prefix are added to every new repository. Otherwise, use the correct prefix for the project type.
 
-The script to set up the workflows for new repositories is `update-workflows.sh`. It copies the necessary files to the new
+The script to set up the workflows for new repositories is `./update_workflows.sh`. It copies the necessary files to the new
 repository. It starts with the default workflows and adds the specific ones based on the project type. In case of a filename clash,
 the specific template overwrites the default one (exception: `.gitignore` These files are concatenated).
 
@@ -51,6 +52,8 @@ Use
 
 in the file to describe the triggers which should be used in the repository. The script will automatically replace the triggers
 marked with `USE_WORKFLOW` which are valid within this repository only.
+
+Make sure that this block is well formatted, otherwise the update script will fail in the related repository due to prettier.
 
 ### Spell Checker
 
