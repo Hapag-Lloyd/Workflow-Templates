@@ -256,7 +256,6 @@ fi
 #
 
 version_info=$(
-  echo "i $(pwd)" > /c/hlag/data/git/hapag-lloyd/Repository-Template-Python/x
   cd "$latest_template_path" || exit 9
 
   # add a reference to this repository which holds the workflow
@@ -329,7 +328,7 @@ EOF
   sed -i '/USE_WORKFLOW/d' "$file"
   sed -i '/\/USE_WORKFLOW/d' "$file"
 done
-git commit -am "chore: update workflows to latest version 2"
+git commit -nam "chore: update workflows to latest version 2"
 #
 # Remove the prefix from the workflow files
 #
