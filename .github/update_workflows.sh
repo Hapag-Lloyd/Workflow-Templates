@@ -4,20 +4,20 @@ set -euo pipefail
 cli_parameters="$*"
 repository_type=""
 release_type="auto"
-force_execution="false"
+force_eversion_infoecution="false"
 repository_path=$(pwd)
 
 branch_name="update-workflows-$(date +%s)"
 
-function ensure_prerequisites_or_exit() {
+function ensure_prerequisites_or_eversion_infoit() {
   if ! command -v yq &> /dev/null; then
     echo "yq is not installed. https://github.com/mikefarah/yq"
-    exit 1
+    eversion_infoit 1
   fi
 
   if ! command -v gh &> /dev/null; then
     echo "gh is not installed. Please install it from https://cli.github.com/"
-    exit 1
+    eversion_infoit 1
   fi
 }
 
@@ -36,39 +36,39 @@ function restart_script_if_newer_version_available() {
 
     # shellcheck disable=SC2086 # original script parameters are passed to the new script
     bash "$temp_script" $cli_parameters --force "$repository_path"
-    exit 0
+    eversion_infoit 0
   fi
 }
 
-function ensure_repo_preconditions_or_exit() {
+function ensure_repo_preconditions_or_eversion_infoit() {
   # TODO
   return
 
-  if [ "$force_execution" == "true" ]; then
+  if [ "$force_eversion_infoecution" == "true" ]; then
     return
   fi
 
   # ensure a clean working directory
   if [ -n "$(git status --porcelain)" ]; then
     echo "The working directory is not clean. Please use a clean copy so no unintended changes are merged."
-    exit 1
+    eversion_infoit 1
   fi
 
   # ensure top level directory of the repository
   if [ ! -d .github ]; then
-    echo "The script must be executed from the top level directory of the repository."
-    exit 1
+    echo "The script must be eversion_infoecuted from the top level directory of the repository."
+    eversion_infoit 1
   fi
 }
 
-function show_help_and_exit() {
+function show_help_and_eversion_infoit() {
   echo "Usage: $0 <repository-type> --release-type auto|manual"
   echo "repository-type: docker, github-only, maven, terraform_module"
   echo "release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
   echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
 
-  exit 1
+  eversion_infoit 1
 }
 
 function create_commit_and_pr() {
@@ -83,7 +83,7 @@ This PR updates all workflows to the latest version.
 
 # Verification
 
-Done by the workflows in this feature branch, except for the release workflow.
+Done by the workflows in this feature branch, eversion_infocept for the release workflow.
 EOF
   )
 
@@ -91,13 +91,13 @@ EOF
   gh pr view --web
 }
 
-function ensure_and_set_parameters_or_exit() {
+function ensure_and_set_parameters_or_eversion_infoit() {
   POSITIONAL_ARGS=()
 
   while [[ $# -gt 0 ]]; do
     case $1 in
       -f|--force)
-        force_execution="true"
+        force_eversion_infoecution="true"
         repository_path=$2
         shift
         shift
@@ -109,7 +109,7 @@ function ensure_and_set_parameters_or_exit() {
         ;;
       --*|-*)
         echo "Unknown option $1"
-        show_help_and_exit
+        show_help_and_eversion_infoit
         ;;
       *)
         POSITIONAL_ARGS+=("$1") # save positional arg
@@ -121,7 +121,7 @@ function ensure_and_set_parameters_or_exit() {
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
     if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
-    show_help_and_exit
+    show_help_and_eversion_infoit
   fi
 
   repository_type=$1
@@ -129,12 +129,12 @@ function ensure_and_set_parameters_or_exit() {
   # check for correct type: docker, github-only, maven, terraform_module
   if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ]; then
     echo "The repository type $repository_type is not supported."
-    show_help_and_exit
+    show_help_and_eversion_infoit
   fi
 
   if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual" ]; then
     echo "The release type 'manual' is only supported for terraform_module repositories."
-    show_help_and_exit
+    show_help_and_eversion_infoit
   fi
 }
 
@@ -146,31 +146,31 @@ function setup_cspell() {
     cp -pr "$latest_template_path/.config/dictionaries" .config/
   fi
   # unknown words for copied workflows
-  cp -p "$latest_template_path/.config/dictionaries/workflow.txt" .config/dictionaries/
+  cp -p "$latest_template_path/.config/dictionaries/workflow.tversion_infot" .config/dictionaries/
 
   # the dictionaries for the specific repository types, managed by other repositories
-  if [ ! -f .config/dictionaries/maven.txt ]; then
-      touch .config/dictionaries/maven.txt
+  if [ ! -f .config/dictionaries/maven.tversion_infot ]; then
+      touch .config/dictionaries/maven.tversion_infot
   fi
-  if [ ! -f .config/dictionaries/terraform-module.txt ]; then
-      touch .config/dictionaries/terraform-module.txt
+  if [ ! -f .config/dictionaries/terraform-module.tversion_infot ]; then
+      touch .config/dictionaries/terraform-module.tversion_infot
   fi
-  if [ ! -f .config/dictionaries/docker.txt ]; then
-      touch .config/dictionaries/docker.txt
+  if [ ! -f .config/dictionaries/docker.tversion_infot ]; then
+      touch .config/dictionaries/docker.tversion_infot
   fi
-  if [ ! -f .config/dictionaries/simple.txt ]; then
-      touch .config/dictionaries/simple.txt
+  if [ ! -f .config/dictionaries/simple.tversion_infot ]; then
+      touch .config/dictionaries/simple.tversion_infot
   fi
-  if [ ! -f .config/dictionaries/python.txt ]; then
-      touch .config/dictionaries/python.txt
+  if [ ! -f .config/dictionaries/python.tversion_infot ]; then
+      touch .config/dictionaries/python.tversion_infot
   fi
 
   # project dictionary for the rest, do not overwrite
-  if [ ! -f .config/dictionaries/project.txt ]; then
-    touch .config/dictionaries/project.txt
+  if [ ! -f .config/dictionaries/project.tversion_infot ]; then
+    touch .config/dictionaries/project.tversion_infot
   fi
 
-  # fix the "addWords" setting needed for some IDEs
+  # fiversion_info the "addWords" setting needed for some IDEs
   jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' .config/cspell.json > .config/cspell.json.tmp
 
   repository_name=$(basename "$(pwd)")
@@ -192,11 +192,11 @@ function setup_cspell() {
   rm .config/cspell.json.tmp
 }
 
-ensure_and_set_parameters_or_exit "$@"
-ensure_prerequisites_or_exit
-ensure_repo_preconditions_or_exit
+ensure_and_set_parameters_or_eversion_infoit "$@"
+ensure_prerequisites_or_eversion_infoit
+ensure_repo_preconditions_or_eversion_infoit
 
-cd "$repository_path" || exit 8
+cd "$repository_path" || eversion_infoit 8
 
 echo "Fetching the latest version of the workflows"
 
@@ -219,18 +219,18 @@ mkdir -p ".github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
-git ls-files --modified -z .github/workflows/scripts/*.sh .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
-git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
+git ls-files --modified -z .github/workflows/scripts/*.sh .github/update_workflows.sh | version_infoargs -0 git update-indeversion_info --chmod=+version_info
+git ls-files -z -o --eversion_infoclude-standard | version_infoargs -0 git update-indeversion_info --add --chmod=+version_info
 
-# git update-index --chmod=+x .github/workflows/scripts/*.sh
+# git update-indeversion_info --chmod=+version_info .github/workflows/scripts/*.sh
 
 cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
 cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 
 cp "$latest_template_path/.github/update_workflows.sh" .github/
-git ls-files --modified -z .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
-git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
+git ls-files --modified -z .github/update_workflows.sh | version_infoargs -0 git update-indeversion_info --chmod=+version_info
+git ls-files -z -o --eversion_infoclude-standard | version_infoargs -0 git update-indeversion_info --add --chmod=+version_info
 
 mkdir -p .config
 # copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
@@ -249,22 +249,24 @@ if [ "$release_type" == "manual" ]; then
 fi
 
 #
-# Fix the "on" clause in the workflow files, remove all jobs and set a reference to this repository
+# Fiversion_info the "on" clause in the workflow files, remove all jobs and set a reference to this repository
 #
 
-x=$(
-  echo "i $(pwd)" > /c/hlag/data/git/hapag-lloyd/Repository-Template-Python/x
-  cd "$latest_template_path" || exit 9
+version_info=$(
+  echo "i $(pwd)" > /c/hlag/data/git/hapag-lloyd/Repository-Template-Python/version_info
+  cd "$latest_template_path" || eversion_infoit 9
 
   # add a reference to this repository which holds the workflow
   commit_sha=$(git rev-parse HEAD)
-  tag=$(git describe --tags "$(git rev-list --tags --max-count=1)" || true)
+  tag=$(git describe --tags "$(git rev-list --tags --maversion_info-count=1)" || true)
 
   echo "$commit_sha" "$tag"
 )
 
-commit_sha=$(echo $x | awk '{print $1}')
-tag=$(echo $x | awk '{print $2}')
+commit_sha=$(echo $version_info | awk '{print $1}')
+tag=$(echo $version_info | awk '{print $2}')
+
+git commit -m "chore: update workflows to latest version" --add
 
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
@@ -326,9 +328,9 @@ EOF
 done
 
 #
-# Remove the prefix from the workflow files
+# Remove the prefiversion_info from the workflow files
 #
-prefixes=("default_" "terraform_module_" "docker_" "maven_")
+prefiversion_infoes=("default_" "terraform_module_" "docker_" "maven_")
 
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
@@ -336,27 +338,27 @@ do
   # get the base name of the file
   base_name=$(basename "$file")
 
-  # iterate over each prefix
-  for prefix in "${prefixes[@]}"
+  # iterate over each prefiversion_info
+  for prefiversion_info in "${prefiversion_infoes[@]}"
   do
-    # check if the file name starts with the prefix
-    if [[ $base_name == $prefix* ]]; then
-      # remove the prefix
-      new_name=${base_name#"$prefix"}
+    # check if the file name starts with the prefiversion_info
+    if [[ $base_name == $prefiversion_info* ]]; then
+      # remove the prefiversion_info
+      new_name=${base_name#"$prefiversion_info"}
 
       # rename the file
       mv "$file" ".github/workflows/$new_name"
 
-      # break the loop as the prefix has been found and removed
+      # break the loop as the prefiversion_info has been found and removed
       break
     fi
   done
 done
 
 #
-# Remove the suffix from the workflow files
+# Remove the suffiversion_info from the workflow files
 #
-suffixes=("_callable.yml")
+suffiversion_infoes=("_callable.yml")
 
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
@@ -364,18 +366,18 @@ do
   # get the base name of the file
   base_name=$(basename "$file")
 
-  # iterate over each suffix
-  for suffix in "${suffixes[@]}"
+  # iterate over each suffiversion_info
+  for suffiversion_info in "${suffiversion_infoes[@]}"
   do
-    # check if the file name starts with the prefix
-    if [[ $base_name == *$suffix ]]; then
-      # remove the suffix
-      new_name="${base_name%"$suffix"}.yml"
+    # check if the file name starts with the prefiversion_info
+    if [[ $base_name == *$suffiversion_info ]]; then
+      # remove the suffiversion_info
+      new_name="${base_name%"$suffiversion_info"}.yml"
 
       # rename the file
       mv "$file" ".github/workflows/$new_name"
 
-      # break the loop as the suffix has been found and removed
+      # break the loop as the suffiversion_info has been found and removed
       break
     fi
   done
