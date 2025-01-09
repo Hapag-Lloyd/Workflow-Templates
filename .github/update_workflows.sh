@@ -219,9 +219,9 @@ mkdir -p ".github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
-# if .github/workflows/scripts/*.sh is added/modified, do update the index
+git ls-files --modified -z .github/workflows/scripts/*.sh .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
+git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
 
-# TODO
 # git update-index --chmod=+x .github/workflows/scripts/*.sh
 
 cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
@@ -229,7 +229,9 @@ cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 
 cp "$latest_template_path/.github/update_workflows.sh" .github/
-# TODO
+git ls-files --modified -z .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
+git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
+
 # git update-index --chmod=+x .github/update_workflows.sh
 
 mkdir -p .config
