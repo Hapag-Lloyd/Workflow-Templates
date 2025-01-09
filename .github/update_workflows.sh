@@ -200,9 +200,9 @@ function setup_cspell() {
   rm .config/cspell.json.tmp
 }
 
+ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
-ensure_and_set_parameters_or_exit "$@"
 
 echo "Fetching the latest version of the workflows"
 latest_template_path=$(mktemp -d -t repository-template-XXXXX)
