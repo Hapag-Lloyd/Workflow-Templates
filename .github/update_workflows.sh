@@ -261,7 +261,7 @@ do
   echo $latest_template_path
   version_reference=$(
     echo $latest_template_path
-    return
+    exit 0
     cd "$latest_template_path" || exit 9
 
     # add a reference to this repository which holds the workflow
