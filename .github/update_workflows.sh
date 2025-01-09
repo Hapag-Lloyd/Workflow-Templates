@@ -256,7 +256,7 @@ rm -rf "$latest_template_path"
 # Fix the "on" clause in the workflow files, remove all jobs and set a reference to this repository
 #
 
-(
+function x() {
   cd "$latest_template_path" || exit 9
 
   # add a reference to this repository which holds the workflow
@@ -264,7 +264,10 @@ rm -rf "$latest_template_path"
   tag=$(git describe --tags "$(git rev-list --tags --max-count=1)" || true)
 
   echo "$commit_sha" "$tag"
-)
+}
+
+commit_sha=$(x | awk '{print $1}')
+tag=$(x | awk '{print $2}')
 
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
