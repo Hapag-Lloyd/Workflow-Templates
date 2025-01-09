@@ -15,6 +15,7 @@ mapfile -t DICTIONARY_FILES_TO_CHECK < <(ls .config/dictionaries/*.txt)
 
 # Make a list of every misspelled word without any custom dictionaries and configuration file
 mv "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
+npx cspell trace mktemp
 npx cspell . --dot --no-progress --no-summary --unique --words-only --no-exit-code --exclude ".git/**" --exclude ".idea/**" --exclude "$DICTIONARIES_PATH/**" | sort --ignore-case --unique > "$MISSPELLED_WORDS_PATH"
 
 # Check the custom dictionaries
