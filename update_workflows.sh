@@ -10,6 +10,11 @@ repository_path=$(pwd)
 branch_name="update-workflows-$(date +%s)"
 
 function ensure_prerequisites_or_exit() {
+  if ! command -v pre-commit &> /dev/null; then
+    echo "pre-commit is not installed. https://github.com/pre-commit/pre-commit"
+    exit 1
+  fi
+
   if ! command -v yq &> /dev/null; then
     echo "yq is not installed. https://github.com/mikefarah/yq"
     exit 1
@@ -349,6 +354,8 @@ do
     fi
   done
 done
+
+pre-commit install -c .config/.pre-commit-config.yaml
 
 create_commit_and_pr .
 
