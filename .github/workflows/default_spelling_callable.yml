@@ -19,7 +19,7 @@ jobs:
 
       - run: |
           npx cspell trace mktemp
-          npx cspell . -c .config/cspell.json --verbose --dot --exclude ".git/**" --exclude ".idea/**" --exclude ".config/dictionaries/**"
+          npx cspell . -c .config/cspell.json --dot
 
       - uses: streetsidesoftware/cspell-action@ef95dc49d631fc2a9e9ea089ae2b2127b7c4588e # v6.10.0
         with:
