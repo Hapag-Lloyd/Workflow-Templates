@@ -1,4 +1,2 @@
 codeowners
 hapag
-kayma
-mktemp
