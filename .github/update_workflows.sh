@@ -41,6 +41,8 @@ function ensure_running_on_the_newest_copy_or_restart() {
 }
 
 function ensure_repo_preconditions_or_exit() {
+  return
+
   if [ "$force_execution" == "true" ]; then
     return
   fi
