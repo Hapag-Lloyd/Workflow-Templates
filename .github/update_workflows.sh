@@ -221,14 +221,14 @@ mkdir -p "$.github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
-git update-index --chmod=+x .github/workflows/scripts/*.sh
+# git update-index --chmod=+x .github/workflows/scripts/*.sh
 
 cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
 cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 
 cp "$latest_template_path/.github/update_workflows.sh" .github/
-git update-index --chmod=+x .github/update_workflows.sh
+# git update-index --chmod=+x .github/update_workflows.sh
 ensure_running_on_the_newest_copy_or_restart
 
 mkdir -p .config
