@@ -222,9 +222,6 @@ fi
 # setup the release workflow
 if [ "$release_type" == "manual" ]; then
   rm .github/workflows/default*release*_callable.yml
-
-  # fix the dictionary
-  sed -i '/conventionalcommits/d' .config/dictionaries/workflows.txt
 fi
 
 #
