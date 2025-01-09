@@ -1,8 +1,8 @@
 ---
 name: Approve all Renovate PRs automatically
 
-# yamllint disable-line rule:truthy
 # USE_WORKFLOW
+# yamllint disable-line rule:truthy
 on:
   workflow_call:
     secrets:
@@ -10,6 +10,7 @@ on:
         required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
+# yamllint disable-line rule:truthy
 # on: pull_request_target
 # /USE_REPOSITORY
 
