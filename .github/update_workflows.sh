@@ -204,7 +204,10 @@ latest_template_path=$(mktemp -d -t repository-template-XXXXX)
 # TODO
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b kayma/update-workflows -q
 
-restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
+# TODO
+if [ "$force_execution" != "false" ]; then
+  restart_script_if_newer_version_available "$repository_path" "$latest_template_path"fi
+fi
 
 echo "Updating the workflows in $repository_path"
 
@@ -263,8 +266,8 @@ version_info=$(
   echo "$commit_sha" "$tag"
 )
 
-commit_sha=$(echo $version_info | cut -d " " -f 1)
-tag=$(echo $version_info | cut -d " " -f 2)
+commit_sha=$(echo "$version_info" | cut -d " " -f 1)
+tag=$(echo "$version_info" | cut -d " " -f 2)
 
 git add .
 git commit -m "chore: update workflows to latest version"
