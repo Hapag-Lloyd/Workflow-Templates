@@ -383,7 +383,7 @@ do
   done
 done
 
-cp .github\workflows\pull_request.yml before.yml
+cp .github/workflows/pull_request.yml before.yml
 
 create_commit_and_pr .
 
