@@ -104,6 +104,10 @@ function ensure_and_set_parameters_or_exit() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
+      --dry-run)
+        dry_run="true"
+        shift
+        ;;
       -f|--force)
         force_execution="true"
         repository_path=$2
@@ -187,10 +191,10 @@ cd "$repository_path" || exit 8
 
 echo "Fetching the latest version of the workflows"
 
-latest_template_path=$(mktemp -d -t repository-template-XXXXX)
+latest_template_path=$(mktemp -d -t repository-templates-XXXXX)
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
 
-if [ "$force_execution" != "false" ]; then
+if [ "$force_execution" != "true" ]; then
   restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
 fi
 
@@ -211,12 +215,13 @@ cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 cp "$latest_template_path/update_workflows.sh" .github/
 
-git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 git update-index --chmod=+x
-git ls-files -z -o --exclude-standard | xargs -0 git update-index --add --chmod=+x
+git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 -I {} git update-index --chmod=+x {}
+git ls-files -z -o --exclude-standard | xargs -0 -I {} git update-index --add --chmod=+x {}
 
 mkdir -p .config
 # copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
 cp -p "$latest_template_path/.config/"*.* .config/
+cp -p "$latest_template_path/.config/".*.* .config/
 
 setup_cspell "$latest_template_path"
 
