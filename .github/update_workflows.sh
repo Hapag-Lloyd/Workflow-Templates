@@ -261,6 +261,7 @@ do
   echo $latest_template_path
   version_reference=$(
     echo $latest_template_path
+    return
     cd "$latest_template_path" || exit 9
 
     # add a reference to this repository which holds the workflow
@@ -271,6 +272,7 @@ do
   )
 
   # parse the values from the subshell
+  echo $version_reference
   commit_sha=$(echo "$version_reference" | cut -d' ' -f1)
   tag=$(echo "$version_reference" | cut -d' ' -f2)
 
