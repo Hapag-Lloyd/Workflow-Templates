@@ -268,8 +268,6 @@ version_info=$(
 commit_sha=$(echo "$version_info" | cut -d " " -f 1)
 tag=$(echo "$version_info" | cut -d " " -f 2)
 
-git commit -am "chore: update workflows to latest version 1"
-
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
 do
@@ -328,8 +326,7 @@ EOF
   sed -i '/USE_WORKFLOW/d' "$file"
   sed -i '/\/USE_WORKFLOW/d' "$file"
 done
-git commit --no-verify -am "chore: update workflows to latest version 2"
-exit 3
+
 #
 # Remove the prefix from the workflow files
 #
