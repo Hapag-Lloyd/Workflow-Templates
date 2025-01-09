@@ -258,7 +258,9 @@ rm -rf "$latest_template_path"
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
 do
+  echo $latest_template_path
   version_reference=$(
+    echo $latest_template_path
     cd "$latest_template_path" || exit 9
 
     # add a reference to this repository which holds the workflow
