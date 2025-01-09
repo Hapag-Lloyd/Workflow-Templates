@@ -201,10 +201,8 @@ cd "$repository_path" || exit 8
 echo "Fetching the latest version of the workflows"
 
 latest_template_path=$(mktemp -d -t repository-template-XXXXX)
-gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -q
-
 # TODO
-(cd "$latest_template_path" && git checkout kayma/update-workflows)
+gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b kayma/update-workflows -q
 
 restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
 
@@ -233,7 +231,6 @@ cp "$latest_template_path/.github/renovate.json5" .github/
 cp "$latest_template_path/.github/update_workflows.sh" .github/
 # TODO
 # git update-index --chmod=+x .github/update_workflows.sh
-ensure_running_on_the_newest_copy_or_restart
 
 mkdir -p .config
 # copy fails if a directory is hit. dictionaries/ is handled in the setup_cspell function
