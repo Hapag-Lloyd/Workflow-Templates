@@ -42,6 +42,7 @@ function ensure_running_on_the_newest_copy_or_restart() {
 }
 
 function ensure_repo_preconditions_or_exit() {
+  # TODO
   return
 
   if [ "$force_execution" == "true" ]; then
@@ -213,22 +214,21 @@ cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
 echo "Fetching the latest version of the workflows"
-latest_template_path=$(mktemp -p . -d -t repository-template-XXXXX)
+latest_template_path=xvü # $(mktemp -p . -d -t repository-template-XXXXX)
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
+# TODO
 (cd "$latest_template_path" && git checkout kayma/update-workflows)
-
-
-echo "Updating the workflows in current project"
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
 
 # basic setup for all types
-mkdir -p "$.github/workflows/scripts"
+mkdir -p ".github/workflows/scripts"
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
+# TODO
 # git update-index --chmod=+x .github/workflows/scripts/*.sh
 
 cp "$latest_template_path/.github/.pre-commit-config.yaml" .github/
@@ -236,6 +236,7 @@ cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 
 cp "$latest_template_path/.github/update_workflows.sh" .github/
+# TODO
 # git update-index --chmod=+x .github/update_workflows.sh
 ensure_running_on_the_newest_copy_or_restart
 
