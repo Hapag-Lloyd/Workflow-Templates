@@ -166,27 +166,6 @@ function setup_cspell() {
   if [ ! -f .config/dictionaries/project.txt ]; then
     touch .config/dictionaries/project.txt
   fi
-
-  # fix the "addWords" setting needed for some IDEs
-  jq 'del(.dictionaryDefinitions[] | select(.addWords) | .addWords)' .config/cspell.json > .config/cspell.json.tmp
-
-  repository_name=$(basename "$(pwd)")
-
-  if [ "$repository_name" == "Repository-Template-Docker" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "docker")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  elif [ "$repository_name" == "Repository-Template-Maven" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "maven")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  elif [ "$repository_name" == "Repository-Template-Terraform-Module" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "terraform-module")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  elif [ "$repository_name" == "Repository-Template-Simple" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "simple")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  elif [ "$repository_name" == "Repository-Template-Python" ]; then
-    jq '(.dictionaryDefinitions[] | select(.name == "python")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  else
-    jq '(.dictionaryDefinitions[] | select(.name == "project")).addWords |= true' .config/cspell.json.tmp > .config/cspell.json
-  fi
-
-  rm .config/cspell.json.tmp
 }
 
 ensure_and_set_parameters_or_exit "$@"
