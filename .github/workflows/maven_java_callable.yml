@@ -2,7 +2,7 @@
 name: Build Java PR
 
 # USE_WORKFLOW
-# yamllint disable-line rule:truthy
+# # yamllint disable-line rule:truthy
 on:
   workflow_call:
 # /USE_WORKFLOW
