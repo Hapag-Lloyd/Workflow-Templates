@@ -220,6 +220,7 @@ if [ -d "$latest_template_path" ]; then
   rm -rf "$latest_template_path"
 fi
 
+echo "i $(pwd)"
 gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path"
 
 # TODO
