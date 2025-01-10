@@ -1,7 +1,6 @@
 amannn
 aquasecurity
 buildx
-codeowners
 conventionalcommits
 cpus
 dockerhub
