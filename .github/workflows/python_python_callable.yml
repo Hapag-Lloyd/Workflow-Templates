@@ -2,7 +2,7 @@
 name: Python build
 
 # USE_WORKFLOW
-## yamllint disable-line rule:truthy
+# yamllint disable-line rule:truthy
 on:
   workflow_call:
     inputs:
