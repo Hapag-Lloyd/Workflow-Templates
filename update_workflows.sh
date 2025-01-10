@@ -203,7 +203,9 @@ if [ -z "$latest_template_path" ]; then
   latest_template_path=$(mktemp -d -t repository-templates-XXXXX)
   gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
 
-  restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
+  if [ "$force_execution" != "true" ]; then
+    restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
+  fi
 else
   echo "Using the local workflow path $latest_template_path and do not check for a newer version of the script"
 fi
@@ -222,6 +224,8 @@ cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
 
 cp "$latest_template_path/.github/pull_request_template.md" .github/
+cp "$latest_template_path/.github/CODE_OF_CONDUCT.md" .github/
+cp "$latest_template_path/.github/CONTRIBUTING.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
 cp "$latest_template_path/update_workflows.sh" .github/
 
