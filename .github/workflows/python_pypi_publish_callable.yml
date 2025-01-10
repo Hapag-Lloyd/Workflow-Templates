@@ -2,6 +2,7 @@
 name: Publish Python 🐍 distribution 📦 to PyPI
 
 # USE_WORKFLOW
+# yamllint disable rule:comments
 # yamllint disable-line rule:truthy
 on:
   workflow_call:
@@ -27,6 +28,7 @@ on:
 #  release:
 #    types: [published]
 # /USE_REPOSITORY
+# yamllint enable rule:comments
 
 jobs:
   build:
