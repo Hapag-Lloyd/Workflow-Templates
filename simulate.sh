@@ -39,4 +39,6 @@ mv .config/cspell.json .config/cspell.json.temp
 cspell_version="v8.17.1"
 npx cspell@${cspell_version:1} . --dot --no-progress --no-summary --unique --words-only --no-exit-code --exclude ".git/**" --exclude ".idea/**" --exclude "$DICTIONARIES_PATH/**" | sort --ignore-case --unique > ../.config/dictionaries/workflow.txt
 
+mv .config/cspell.json.temp .config/cspell.json
+
 echo "Dictionary workflow.txt updated in your branch. Please review and commit the changes."
