@@ -26,7 +26,7 @@ git checkout main
 
 cp ../update_workflows.sh .
 
-./update_workflows.sh github-only --force . --dry-run --local-workflow-path ../
+./update_workflows.sh python --force . --dry-run --local-workflow-path ../
 # script is now located in .github/
 rm update_workflows.sh
 

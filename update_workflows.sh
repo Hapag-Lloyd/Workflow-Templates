@@ -67,7 +67,7 @@ function ensure_repo_preconditions_or_exit() {
 
 function show_help_and_exit() {
   echo "Usage: $0 <repository-type> --release-type auto|manual --dry-run"
-  echo "repository-type: docker, github-only, maven, terraform_module"
+  echo "repository-type: docker, github-only, maven, python, terraform_module"
   echo "--release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
   echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
@@ -77,6 +77,8 @@ function show_help_and_exit() {
 }
 
 function create_commit_and_pr() {
+  workflow_tag=$1
+
   git add .
   git commit -m "update workflows to latest version"
   git push --set-upstream origin "$branch_name"
@@ -95,7 +97,7 @@ EOF
   if [ "$dry_run" == "true" ]; then
     echo "Dry run, no PR created"
   else
-    gh pr create --title "ci(deps): update workflows to latest version" --body "$body" --base main
+    gh pr create --title "ci(deps): update workflows to $workflow_tag" --body "$body" --base main
     gh pr view --web
   fi
 }
@@ -145,7 +147,7 @@ function ensure_and_set_parameters_or_exit() {
   repository_type=$1
 
   # check for correct type: docker, github-only, maven, terraform_module
-  if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ]; then
+  if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ] && [ "$repository_type" != "python" ]; then
     echo "The repository type $repository_type is not supported."
     show_help_and_exit
   fi
@@ -298,13 +300,37 @@ EOF
       type=$(yq ".on.workflow_call.inputs.$input.type" "$file".bak)
       required=$(yq ".on.workflow_call.inputs.$input.required" "$file".bak)
       description=$(yq ".on.workflow_call.inputs.$input.description" "$file".bak)
+      default="\"my special value\""
+      todo="# TODO insert correct value for $input"$'\n'"      "
+
+      case "$input" in
+        "python-version")
+          # no expansion of the variable as it is a string we want to keep
+          # shellcheck disable=SC2016
+          default='${{ vars.PYTHON_VERSION }}'
+          todo=""
+          ;;
+        "python-versions")
+          # no expansion of the variable as it is a string we want to keep
+          # shellcheck disable=SC2016
+          default='${{ vars.PYTHON_VERSIONS }}'
+          todo=""
+          ;;
+        "pypi-url")
+          # no expansion of the variable as it is a string we want to keep
+          # shellcheck disable=SC2016
+          default='${{ vars.PYPI_URL }}'
+          todo=""
+          ;;
+        *)
+          ;;
+      esac
 
       cat >> "$file" <<-EOF
-      # TODO insert correct value for $input
-      # type: $type
+      $todo# type: $type
       # required: $required
       # description: $description
-      $input: "my-special-value"
+      $input: $default
 EOF
     done
 
@@ -327,7 +353,7 @@ done
 #
 # Remove the prefix from the workflow files
 #
-prefixes=("default_" "terraform_module_" "docker_" "maven_")
+prefixes=("default_" "terraform_module_" "docker_" "maven_" "python_")
 
 # iterate over each file in the directory
 for file in .github/workflows/*.yml
@@ -382,7 +408,7 @@ done
 
 pre-commit install -c .config/.pre-commit-config.yaml
 
-create_commit_and_pr .
+create_commit_and_pr "$tag"
 
 # do not remove the latest template path if it was provided as a parameter
 if [ -z "$local_workflow_path" ]; then
