@@ -1,11 +1,10 @@
 #!/bin/bash
+set -euo pipefail
 
 #
 # Based on the idea outlined in https://github.com/streetsidesoftware/cspell/issues/2536#issuecomment-1126077282
 # but with a few modifications to fit the needs of our project.
 #
-
-set -euo pipefail
 
 MISSPELLED_WORDS_PATH="misspelled-words.txt"
 

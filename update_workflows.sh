@@ -7,6 +7,7 @@ release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
 dry_run="false"
+local_workflow_path=""
 
 branch_name="update-workflows-$(date +%s)"
 
@@ -31,7 +32,7 @@ function restart_script_if_newer_version_available() {
   repository_path=$1
   latest_template_path=$2
 
-  current_sha=$(sha256sum "$repository_path/.github/update_workflows.sh" | cut -d " " -f 1)
+  current_sha=$(sha256sum "$repository_path/.github/update_workflows.sh" | cut -d " " -f 1 || echo "missing")
   new_sha=$(sha256sum "$latest_template_path/update_workflows.sh" | cut -d " " -f 1)
 
   if [ "$current_sha" != "$new_sha" ]; then
@@ -114,6 +115,11 @@ function ensure_and_set_parameters_or_exit() {
         shift
         shift
         ;;
+      --local-workflow-path)
+        local_workflow_path=$2
+        shift
+        shift
+        ;;
       --release-type)
         release_type=$2
         shift
@@ -189,13 +195,17 @@ ensure_repo_preconditions_or_exit
 
 cd "$repository_path" || exit 8
 
-echo "Fetching the latest version of the workflows"
+latest_template_path=$local_workflow_path
 
-latest_template_path=$(mktemp -d -t repository-templates-XXXXX)
-gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
+if [ -z "$latest_template_path" ]; then
+  echo "Cloning the latest version of the workflows"
 
-if [ "$force_execution" != "true" ]; then
+  latest_template_path=$(mktemp -d -t repository-templates-XXXXX)
+  gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
+
   restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
+else
+  echo "Using the local workflow path $latest_template_path and do not check for a newer version of the script"
 fi
 
 echo "Updating the workflows in $repository_path"
@@ -370,4 +380,7 @@ pre-commit install -c .config/.pre-commit-config.yaml
 
 create_commit_and_pr .
 
-rm -rf "$latest_template_path"
+# do not remove the latest template path if it was provided as a parameter
+if [ -z "$local_workflow_path" ]; then
+  rm -rf "$latest_template_path"
+fi

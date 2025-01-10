@@ -55,6 +55,13 @@ marked with `USE_WORKFLOW` which are valid within this repository only.
 
 Make sure that this block is well formatted, otherwise the update script will fail in the related repository due to prettier.
 
+### Simulate the update
+
+Use the `simulate.sh` script to check the changes before applying them to the repository. The script
+
+- creates a new repository called `simulate-*` and applies the changes there
+- updates the `workflow.txt` dictionary in your current branch
+
 ### Spell Checker
 
 1. Add the words to the `.config/dictionaries/workflow.txt` file.
