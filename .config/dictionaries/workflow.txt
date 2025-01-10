@@ -1,3 +1,2 @@
-codeowners
-hapag
+Hapag
 nullglob
