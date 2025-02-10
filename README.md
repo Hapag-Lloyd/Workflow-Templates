@@ -6,12 +6,7 @@ This repository stores templates used to set up workflows for new repositories.
 
 ```bash
 git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git workflow-templates
-cp workflow-templates/update_workflows.sh <path-to-new-repository>/
-rm -rf workflow-templates
-
-cd <path-to-new-repository>
-./update_workflows.sh <type>
-rm update_workflows.sh
+./update_workflows.sh <type> <path-to-new-repository>
 ```
 
 Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
