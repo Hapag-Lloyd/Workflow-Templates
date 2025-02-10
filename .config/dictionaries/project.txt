@@ -13,8 +13,10 @@ hoverkraft
 ibiqlik
 junitxml
 ludeeus
+nullglob
 ossrh
 pypa
+pypi
 pytest
 releaserc
 rhysd
