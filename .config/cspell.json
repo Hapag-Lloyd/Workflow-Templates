@@ -5,9 +5,9 @@
     ".git/",
     ".idea/",
     ".config/dictionaries/",
-    ".infracost/",
-    ".terraform/",
-    "*.tfstate.*"
+    "**/.infracost/**",
+    "**/.terraform/**",
+    "**/*.tfstate.*"
   ],
   "dictionaries": [
     "workflow",
