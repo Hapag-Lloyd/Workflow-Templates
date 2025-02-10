@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cli_parameters="$*"
 repository_type=""
 release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
 dry_run="false"
-local_workflow_path=""
 
 branch_name="update-workflows-$(date +%s)"
 
@@ -25,25 +23,6 @@ function ensure_prerequisites_or_exit() {
   if ! command -v gh &> /dev/null; then
     echo "gh is not installed. Please install it from https://cli.github.com/"
     exit 1
-  fi
-}
-
-function restart_script_if_newer_version_available() {
-  repository_path=$1
-  latest_template_path=$2
-
-  current_sha=$(sha256sum "$repository_path/.github/update_workflows.sh" | cut -d " " -f 1 || echo "missing")
-  new_sha=$(sha256sum "$latest_template_path/update_workflows.sh" | cut -d " " -f 1)
-
-  if [ "$current_sha" != "$new_sha" ]; then
-    echo "Restarting the script with the latest version ..."
-
-    temp_script=$(mktemp -t update_workflows-XXXXX)
-    cp "$latest_template_path/update_workflows.sh" "$temp_script"
-
-    # shellcheck disable=SC2086 # original script parameters are passed to the new script
-    bash "$temp_script" $cli_parameters --force "$repository_path"
-    exit 0
   fi
 }
 
@@ -66,8 +45,9 @@ function ensure_repo_preconditions_or_exit() {
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 <repository-type> --release-type auto|manual --dry-run"
+  echo "Usage: $0 <repository-type> <repository-path> --release-type auto|manual --dry-run"
   echo "repository-type: docker, github-only, maven, python, terraform_module"
+  echo "repository-path: the path to the repository to update"
   echo "--release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
   echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
@@ -113,13 +93,6 @@ function ensure_and_set_parameters_or_exit() {
         ;;
       -f|--force)
         force_execution="true"
-        repository_path=$2
-        shift
-        shift
-        ;;
-      --local-workflow-path)
-        local_workflow_path=$2
-        shift
         shift
         ;;
       --release-type)
@@ -140,11 +113,12 @@ function ensure_and_set_parameters_or_exit() {
 
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-    if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
+    if [ "${#POSITIONAL_ARGS[@]}" -ne 2 ]; then
     show_help_and_exit
   fi
 
   repository_type=$1
+  repository_path=$2
 
   # check for correct type: docker, github-only, maven, terraform_module
   if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ] && [ "$repository_type" != "python" ]; then
@@ -164,7 +138,12 @@ function setup_cspell() {
   # init the dictionaries
   if [ ! -d .config/dictionaries ]; then
     cp -pr "$latest_template_path/.config/dictionaries" .config/
+
+    # project dictionary, create an empty one instead of copying the template
+    rm .config/dictionaries/project.txt
+    touch .config/dictionaries/project.txt
   fi
+
   # unknown words for copied workflows
   cp -p "$latest_template_path/.config/dictionaries/workflow.txt" .config/dictionaries/
 
@@ -195,23 +174,9 @@ ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 
+latest_template_path=$(pwd)
+
 cd "$repository_path" || exit 8
-
-latest_template_path=$local_workflow_path
-
-if [ -z "$latest_template_path" ]; then
-  echo "Cloning the latest version of the workflows"
-
-  latest_template_path=$(mktemp -d -t repository-templates-XXXXX)
-  gh repo clone https://github.com/Hapag-Lloyd/Workflow-Templates.git "$latest_template_path" -- -b main -q
-
-  if [ "$force_execution" != "true" ]; then
-    restart_script_if_newer_version_available "$repository_path" "$latest_template_path"
-  fi
-else
-  echo "Using the local workflow path $latest_template_path and do not check for a newer version of the script"
-fi
-
 echo "Updating the workflows in $repository_path"
 
 git fetch origin main
@@ -222,6 +187,7 @@ shopt -s nullglob
 
 # basic setup for all types
 mkdir -p ".github/workflows/scripts"
+
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
 
@@ -229,7 +195,6 @@ cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/CODE_OF_CONDUCT.md" .github/
 cp "$latest_template_path/.github/CONTRIBUTING.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
-cp "$latest_template_path/update_workflows.sh" .github/
 
 git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 -I {} git update-index --chmod=+x {}
 git ls-files -z -o --exclude-standard | xargs -0 -I {} git update-index --add --chmod=+x {}
@@ -406,11 +371,10 @@ do
   done
 done
 
+# remove unnecessary files
+rm -f renovate.json
+rm -f .github/update_workflows.sh
+
 pre-commit install -c .config/.pre-commit-config.yaml
 
 create_commit_and_pr "$tag"
-
-# do not remove the latest template path if it was provided as a parameter
-if [ -z "$local_workflow_path" ]; then
-  rm -rf "$latest_template_path"
-fi
