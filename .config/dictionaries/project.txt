@@ -13,8 +13,10 @@ hoverkraft
 ibiqlik
 junitxml
 ludeeus
+nullglob
 ossrh
 pypa
+pypi
 pytest
 releaserc
 rhysd
@@ -23,5 +25,4 @@ shellcheck
 shuf
 shunsuke
 temurin
-tflint
 tfsec

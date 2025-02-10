@@ -5,19 +5,27 @@ set -euo pipefail
 # Based on the idea outlined in https://github.com/streetsidesoftware/cspell/issues/2536#issuecomment-1126077282
 # but with a few modifications to fit the needs of our project.
 #
-
 MISSPELLED_WORDS_PATH="misspelled-words.txt"
 
-CSPELL_CONFIGURATION_FILE=$(find . -name "cspell.json" | head -n 1)
+CSPELL_CONFIGURATION_FILE=".config/cspell.json"
 DICTIONARIES_PATH=".config/dictionaries"
 mapfile -t DICTIONARY_FILES_TO_CHECK < <(ls .config/dictionaries/*.txt)
 
-# Make a list of every misspelled word without any custom dictionaries and configuration file
-mv "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
+export LC_ALL='C'
 
-# renovate: datasource=github-releases depName=streetsidesoftware/cspell
+# Make a list of every misspelled word without any custom dictionaries and configuration file
+cp "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
+jq 'del(.dictionaryDefinitions)' "${CSPELL_CONFIGURATION_FILE}.temp" | \
+  jq 'del(.dictionaries)' > "$CSPELL_CONFIGURATION_FILE"
+
+# renovate: datasource=npm depName=@cspell/dict-cspell-bundle
+cspell_dict_version="v1.0.29"
+npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
+
+# renovate: datasource=npm depName=cspell
 cspell_version="v8.17.1"
-npx cspell@${cspell_version:1} . --dot --no-progress --no-summary --unique --words-only --no-exit-code --exclude ".git/**" --exclude ".idea/**" --exclude "$DICTIONARIES_PATH/**" | sort --ignore-case --unique > "$MISSPELLED_WORDS_PATH"
+npx cspell@${cspell_version:1} . -c "$CSPELL_CONFIGURATION_FILE" --dot --no-progress --no-summary --unique --words-only \
+  --no-exit-code --exclude "$DICTIONARIES_PATH/**" | sort --ignore-case --unique > "$MISSPELLED_WORDS_PATH"
 
 # Check the custom dictionaries
 ONE_OR_MORE_FAILURES=0
