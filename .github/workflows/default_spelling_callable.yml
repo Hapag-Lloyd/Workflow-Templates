@@ -18,11 +18,11 @@ jobs:
 
       - run: |
           # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
-          cspell_dict_version="v1.0.29"
+          cspell_dict_version="1.0.30"
           npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
 
           # renovate: datasource=npm depName=cspell
-          cspell_version="v8.17.1"
+          cspell_version="8.17.3"
           npx cspell@${cspell_version:1} . -c .config/cspell.json --dot
 
   validate-dictionaries:
