@@ -18,7 +18,7 @@ cp "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
 jq 'del(.dictionaries)' "${CSPELL_CONFIGURATION_FILE}.temp" > "$CSPELL_CONFIGURATION_FILE"
 
 # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
-cspell_dict_version="v1.0.30"
+cspell_dict_version="1.0.30"
 npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
 
 # renovate: datasource=npm depName=cspell
