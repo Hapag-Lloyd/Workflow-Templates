@@ -22,11 +22,11 @@ jobs:
 
           # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
           cspell_dict_version="1.0.30"
-          npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
+          npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
 
           # renovate: datasource=npm depName=cspell
           cspell_version="8.17.3"
-          npx cspell@${cspell_version:1} . -c .config/cspell.json --dot
+          npx cspell@${cspell_version} . -c .config/cspell.json --dot
 
   validate-dictionaries:
     runs-on: ubuntu-latest
