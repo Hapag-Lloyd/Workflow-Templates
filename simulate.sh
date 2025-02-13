@@ -19,26 +19,39 @@ echo "Creating the remote repository in $path_origin"
 echo "Creating a new repository in $path"
 git init --initial-branch main "$path"
 
-cd "$path"
-git remote add origin "../$path_origin"
-git fetch origin main
-git checkout main
+(
+  cd "$path"
+  git remote add origin "../$path_origin"
+  git fetch origin main
+  git checkout main
+)
 
-cp ../update_workflows.sh .
-
-./update_workflows.sh python --force . --dry-run --local-workflow-path ../
-# script is now located in .github/
-rm update_workflows.sh
+./update_workflows.sh terraform_module --force --dry-run "$path"
 
 echo "Creating the word list file"
 
-# don't use the cspell.json file to get the list of misspelled words we need to add to the dictionary
-mv .config/cspell.json .config/cspell.json.temp
+export LC_ALL='C'
+
+# Make a list of every misspelled word without any custom dictionaries and configuration file
+cd "$path"
+
+CSPELL_CONFIGURATION_FILE=".config/cspell.json"
+DICTIONARIES_PATH=".config/dictionaries"
+
+cp "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
+
+jq 'del(.dictionaryDefinitions)' "${CSPELL_CONFIGURATION_FILE}.temp" | \
+  jq 'del(.dictionaries)' > "$CSPELL_CONFIGURATION_FILE"
+
+# renovate: datasource=npm depName=@cspell/dict-cspell-bundle
+cspell_dict_version="v1.0.29"
+npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
 
 # renovate: datasource=github-releases depName=streetsidesoftware/cspell
 cspell_version="v8.17.1"
-npx cspell@${cspell_version:1} . --dot --no-progress --no-summary --unique --words-only --no-exit-code --exclude ".git/**" --exclude ".idea/**" --exclude "$DICTIONARIES_PATH/**" | sort --ignore-case --unique > ../.config/dictionaries/workflow.txt
+npx cspell@${cspell_version:1} . -c "$CSPELL_CONFIGURATION_FILE" --dot --no-progress --no-summary --unique --words-only \
+  --no-exit-code --exclude "$DICTIONARIES_PATH/**" | sed 's/.*/\L&/g' | sort --ignore-case --unique > ../.config/dictionaries/workflow.txt
 
-mv .config/cspell.json.temp .config/cspell.json
+mv "${CSPELL_CONFIGURATION_FILE}.temp" "$CSPELL_CONFIGURATION_FILE"
 
 echo "Dictionary workflow.txt updated in your branch. Please review and commit the changes."
