@@ -18,7 +18,7 @@ jobs:
 
       - run: |
           # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
-          cspell_dict_version="v1.0.29"
+          cspell_dict_version="1.0.30"
           npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
 
           # renovate: datasource=npm depName=cspell
