@@ -25,4 +25,3 @@ shellcheck
 shuf
 shunsuke
 temurin
-tfsec
