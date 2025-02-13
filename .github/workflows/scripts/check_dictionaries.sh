@@ -15,11 +15,10 @@ export LC_ALL='C'
 
 # Make a list of every misspelled word without any custom dictionaries and configuration file
 cp "$CSPELL_CONFIGURATION_FILE" "${CSPELL_CONFIGURATION_FILE}.temp"
-jq 'del(.dictionaryDefinitions)' "${CSPELL_CONFIGURATION_FILE}.temp" | \
-  jq 'del(.dictionaries)' > "$CSPELL_CONFIGURATION_FILE"
+jq 'del(.dictionaries)' "${CSPELL_CONFIGURATION_FILE}.temp" > "$CSPELL_CONFIGURATION_FILE"
 
 # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
-cspell_dict_version="v1.0.30"
+cspell_dict_version="1.0.30"
 npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
 
 # renovate: datasource=npm depName=cspell
