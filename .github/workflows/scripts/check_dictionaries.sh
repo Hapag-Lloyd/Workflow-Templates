@@ -48,14 +48,19 @@ done
 
 rm -f "$MISSPELLED_WORDS_PATH"
 
+# check for duplicates with the projects.txt dictionary
+for DICTIONARY_FILE in "${DICTIONARY_FILES_TO_CHECK[@]}"; do
+  echo "Checking $DICTIONARY_FILE for duplicates with projects.txt ..."
+
+  if ! cat "${DICTIONARY_FILE}" "${DICTIONARIES_PATH}/projects.txt" | sort --ignore-case | sort --unique --check; then
+    echo "Duplicate found in $DICTIONARY_FILE. Remove from projects.txt."
+    ONE_OR_MORE_FAILURES=1
+  fi
+done
+
 if [ $ONE_OR_MORE_FAILURES -ne "0" ]; then
   echo "Dictionary check failed."
   exit 1
 fi
-
-# check all dictionaries for duplicates
-echo "Checking all dictionaries for duplicates..."
-
-cat "${DICTIONARY_FILES_TO_CHECK[@]}" | sort --ignore-case | sort --unique --check
 
 echo "All dictionaries are valid."

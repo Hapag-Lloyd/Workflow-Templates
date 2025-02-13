@@ -59,6 +59,8 @@ Use the `simulate.sh` script to check the changes before applying them to the re
 
 ### Spell Checker
 
-1. Add the words to the `.config/dictionaries/workflow.txt` file.
-2. `.config/dictionaries/project.txt` file is used for the project specific words of the project being set up.
-3. All other dictionaries are managed by the `Repository-Template-*` repositories.
+1. Add words relevant for all project types to the `.config/dictionaries/workflow.txt` file.
+2. Add words relevant for a specific project type to the `docker.txt`, `maven.txt`, ... file. These dictionaries are merged with
+   the dictionary from the `Repository-Template-*` repositories.
+3. `.config/dictionaries/project.txt` file is used for the project specific words. These words are not used in the repositories
+   being set up.
