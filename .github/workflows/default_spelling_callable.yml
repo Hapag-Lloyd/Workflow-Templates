@@ -32,4 +32,3 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: .github/workflows/scripts/check_dictionaries.sh
-        if: steps.changes-for-shell.outputs.dictionaries == 'true'

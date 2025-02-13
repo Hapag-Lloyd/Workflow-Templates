@@ -44,12 +44,12 @@ jq 'del(.dictionaryDefinitions)' "${CSPELL_CONFIGURATION_FILE}.temp" | \
   jq 'del(.dictionaries)' > "$CSPELL_CONFIGURATION_FILE"
 
 # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
-cspell_dict_version="v1.0.29"
-npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version:1}
+cspell_dict_version="1.0.30"
+npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
 
 # renovate: datasource=github-releases depName=streetsidesoftware/cspell
-cspell_version="v8.17.1"
-npx cspell@${cspell_version:1} . -c "$CSPELL_CONFIGURATION_FILE" --dot --no-progress --no-summary --unique --words-only \
+cspell_version="8.17.3"
+npx cspell@${cspell_version} . -c "$CSPELL_CONFIGURATION_FILE" --dot --no-progress --no-summary --unique --words-only \
   --no-exit-code --exclude "$DICTIONARIES_PATH/**" | sed 's/.*/\L&/g' | sort --ignore-case --unique > ../.config/dictionaries/workflow.txt
 
 mv "${CSPELL_CONFIGURATION_FILE}.temp" "$CSPELL_CONFIGURATION_FILE"
