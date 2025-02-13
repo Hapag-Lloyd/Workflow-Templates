@@ -50,10 +50,15 @@ rm -f "$MISSPELLED_WORDS_PATH"
 
 # check for duplicates with the project.txt dictionary
 for DICTIONARY_FILE in "${DICTIONARY_FILES_TO_CHECK[@]}"; do
+  # don't check the project.txt dictionary against itself
+  if [ "$(basename "$DICTIONARY_FILE")" = "project.txt" ]; then
+    continue
+  fi
+
   echo "Checking $DICTIONARY_FILE for duplicates with project.txt ..."
 
   if ! cat "${DICTIONARY_FILE}" "${DICTIONARIES_PATH}/project.txt" | sort --ignore-case | sort --unique --check; then
-    echo "Duplicate found. Remove it from project.txt."
+    echo "Duplicate(s) found. Remove it from project.txt."
     ONE_OR_MORE_FAILURES=1
   fi
 done

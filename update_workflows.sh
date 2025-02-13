@@ -144,9 +144,6 @@ function setup_cspell() {
     touch .config/dictionaries/project.txt
   fi
 
-  # unknown words for copied workflows
-  cp -p "$latest_template_path/.config/dictionaries/workflow.txt" .config/dictionaries/
-
   # the dictionaries for the specific repository types, managed by other repositories
   if [ ! -f .config/dictionaries/maven.txt ]; then
       touch .config/dictionaries/maven.txt
@@ -163,6 +160,8 @@ function setup_cspell() {
   if [ ! -f .config/dictionaries/python.txt ]; then
       touch .config/dictionaries/python.txt
   fi
+
+  # TODO merge these with ours!!
 
   # project dictionary for the rest, do not overwrite
   if [ ! -f .config/dictionaries/project.txt ]; then
