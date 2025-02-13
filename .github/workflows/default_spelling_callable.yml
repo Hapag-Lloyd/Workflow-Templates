@@ -17,9 +17,6 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - run: |
-          # create a dummy package.json file
-          echo "{}" > package.json
-
           # renovate: datasource=npm depName=@cspell/dict-cspell-bundle
           cspell_dict_version="1.0.30"
           npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
