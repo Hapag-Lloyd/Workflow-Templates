@@ -54,4 +54,9 @@ if [ $ONE_OR_MORE_FAILURES -ne "0" ]; then
   exit 1
 fi
 
+# check all dictionaries for duplicates
+echo "Checking all dictionaries for duplicates..."
+
+cat "${DICTIONARY_FILES_TO_CHECK[@]}" | sort --ignore-case | sort --unique --check
+
 echo "All dictionaries are valid."
