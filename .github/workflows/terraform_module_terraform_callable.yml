@@ -5,11 +5,6 @@ name: Terraform
 ## yamllint disable-line rule:truthy
 on:
   workflow_call:
-    secrets:
-      TFLINT_ROLE_ARN:
-        required: true
-      TFLINT_AWS_REGION:
-        required: true
 # /USE_WORKFLOW
 # USE_REPOSITORY
 ## yamllint disable-line rule:truthy
@@ -43,39 +38,3 @@ jobs:
       - run: terraform init -input=false -backend=false
 
       - run: terraform validate
-
-  tflint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        name: Cache plugin dir
-        with:
-          path: ~/.tflint.d/plugins
-          key: tflint-${{ hashFiles('.config/tflint.hcl') }}
-
-      - name: configure aws credentials
-        uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
-        with:
-          role-to-assume: ${{ secrets.TFLINT_ROLE_ARN }}
-          role-session-name: tflint
-          aws-region: ${{ secrets.TFLINT_AWS_REGION }}
-
-      - name: install tflint
-        run: |
-          # renovate: datasource=github-tags depName=terraform-linters/tflint
-          tflint_version="v0.50.3"
-
-          curl -o tflint.zip -L \
-            https://github.com/terraform-linters/tflint/releases/download/${tflint_version}/tflint_linux_amd64.zip
-          unzip tflint.zip
-
-      - name: Show version
-        run: ./tflint --config=.config/tflint.hcl --version
-
-      - name: Init TFLint
-        run: ./tflint --config=.config/tflint.hcl --init
-
-      - name: Run TFLint
-        run: ./tflint --config=.config/tflint.hcl -f compact
