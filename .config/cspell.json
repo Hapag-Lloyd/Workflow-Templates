@@ -12,7 +12,6 @@
     "**/node_modules/**"
   ],
   "dictionaries": [
-    "workflow",
     "maven",
     "python",
     "docker",
@@ -21,10 +20,6 @@
     "project"
   ],
   "dictionaryDefinitions": [
-    {
-      "name": "workflow",
-      "path": "dictionaries/workflow.txt"
-    },
     {
       "name": "maven",
       "path": "dictionaries/maven.txt"
