@@ -9,7 +9,7 @@ MISSPELLED_WORDS_PATH="misspelled-words.txt"
 
 CSPELL_CONFIGURATION_FILE=".config/cspell.json"
 DICTIONARIES_PATH=".config/dictionaries"
-mapfile -t DICTIONARY_FILES_TO_CHECK < <(ls .config/dictionaries/*.txt)
+mapfile -t DICTIONARY_FILES_TO_CHECK < <(ls ${DICTIONARIES_PATH}/*.txt)
 
 export LC_ALL='C'
 
@@ -48,14 +48,24 @@ done
 
 rm -f "$MISSPELLED_WORDS_PATH"
 
+# check for duplicates with the project.txt dictionary
+for DICTIONARY_FILE in "${DICTIONARY_FILES_TO_CHECK[@]}"; do
+  # don't check the project.txt dictionary against itself
+  if [ "$(basename "$DICTIONARY_FILE")" = "project.txt" ]; then
+    continue
+  fi
+
+  echo "Checking $DICTIONARY_FILE for duplicates with project.txt ..."
+
+  if ! cat "${DICTIONARY_FILE}" "${DICTIONARIES_PATH}/project.txt" | sort --ignore-case | sort --unique --check; then
+    echo "Duplicate(s) found. Remove it from project.txt."
+    ONE_OR_MORE_FAILURES=1
+  fi
+done
+
 if [ $ONE_OR_MORE_FAILURES -ne "0" ]; then
   echo "Dictionary check failed."
   exit 1
 fi
-
-# check all dictionaries for duplicates
-echo "Checking all dictionaries for duplicates..."
-
-cat "${DICTIONARY_FILES_TO_CHECK[@]}" | sort --ignore-case | sort --unique --check
 
 echo "All dictionaries are valid."
