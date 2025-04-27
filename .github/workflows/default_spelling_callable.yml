@@ -22,7 +22,7 @@ jobs:
           npm i -D @cspell/dict-cspell-bundle@${cspell_dict_version}
 
           # renovate: datasource=npm depName=cspell
-          cspell_version="8.19.2"
+          cspell_version="8.19.3"
           npx cspell@${cspell_version} . -c .config/cspell.json --dot
 
   validate-dictionaries:
