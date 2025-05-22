@@ -14,15 +14,16 @@ all files in case of major changes in the templates.
 
 ## Update existing repositories
 
-````bash
+```bash
   cd <path-to-this-repository>
   git checkout main
   git pull
 
-  ./update_workflows.sh <repository-type> <repository-path> --release-type auto|manual --dry-run
-̀```
+  ./update_workflows.sh <repository-type> <repository-path> --release-type auto|manual --dry-run --use-existing-branch
+```
 
-Use without `--dry-run` to apply the changes and create a pull request.
+Use without `--dry-run` to apply the changes and create a pull request. `--use-existing-branch` is useful to update a Renovate MR.
+Make sure to checkout the branch first.
 
 ## What you get
 

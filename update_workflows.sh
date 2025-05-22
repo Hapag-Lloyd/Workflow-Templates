@@ -6,6 +6,7 @@ release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
 dry_run="false"
+use_existing_branch="false"
 
 branch_name="update-workflows-$(date +%s)"
 
@@ -51,6 +52,7 @@ function show_help_and_exit() {
   echo "--release-type: (optional)"
   echo "  auto: the release will be triggered automatically on a push to the default branch"
   echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
+  echo "--use-existing-branch: (optional) use the existing branch instead of creating a new one"
   echo "--dry-run: (optional) do not create a PR"
 
   exit 1
@@ -74,8 +76,8 @@ Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
-  if [ "$dry_run" == "true" ]; then
-    echo "Dry run, no PR created"
+  if [ "$dry_run" == "true" ] || [ "$use_existing_branch" == "true" ]; then
+    echo "No PR created, but the changes were committed and pushed."
   else
     gh pr create --title "ci(deps): update workflows to $workflow_tag" --body "$body" --base main
     gh pr view --web
@@ -97,6 +99,11 @@ function ensure_and_set_parameters_or_exit() {
         ;;
       --release-type)
         release_type=$2
+        shift
+        shift
+        ;;
+      --use-existing-branch)
+        use_existing_branch="true"
         shift
         shift
         ;;
@@ -179,8 +186,10 @@ latest_template_path=$(pwd)
 cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
-git fetch origin main
-git checkout -b "$branch_name" origin/main
+if [ "$use_existing_branch" == "false" ]; then
+  git fetch origin main
+  git checkout -b "$branch_name" origin/main
+fi
 
 # enable nullglob to prevent errors when no files are found
 shopt -s nullglob
