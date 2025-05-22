@@ -1,4 +1,4 @@
-<!--- yamllint disable rule:single-title/single-h1 -->
+<!-- markdownlint-disable-file MD025 -->
 
 # Description
 
