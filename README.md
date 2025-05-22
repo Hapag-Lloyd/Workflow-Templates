@@ -55,7 +55,7 @@ Use
 #    branches:
 #      - main
 # /USE_REPOSITORY
-````
+```
 
 in the file to describe the triggers which should be used in the repository. The script will automatically replace the triggers
 marked with `USE_WORKFLOW` which are valid within this repository only.
