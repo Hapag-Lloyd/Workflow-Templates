@@ -12,6 +12,18 @@ git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git workflow-templat
 Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
 all files in case of major changes in the templates.
 
+## Update existing repositories
+
+````bash
+  cd <path-to-this-repository>
+  git checkout main
+  git pull
+
+  ./update_workflows.sh <repository-type> <repository-path> --release-type auto|manual --dry-run
+̀```
+
+Use without `--dry-run` to apply the changes and create a pull request.
+
 ## What you get
 
 ### Default setup
