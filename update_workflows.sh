@@ -46,7 +46,7 @@ function ensure_repo_preconditions_or_exit() {
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 <repository-type> <repository-path> --release-type auto|manual --dry-run"
+  echo "Usage: $0 <repository-type> <repository-path> --release-type auto|manual --dry-run --use-existing-branch"
   echo "repository-type: docker, github-only, maven, python, terraform_module"
   echo "repository-path: the path to the repository to update"
   echo "--release-type: (optional)"
@@ -104,7 +104,6 @@ function ensure_and_set_parameters_or_exit() {
         ;;
       --use-existing-branch)
         use_existing_branch="true"
-        shift
         shift
         ;;
       --*|-*)
