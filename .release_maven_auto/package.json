@@ -24,7 +24,7 @@
     "@semantic-release/github": "11.0.2",
     "@semantic-release/release-notes-generator": "14.0.3",
     "conventional-changelog-conventionalcommits": "9.0.0",
-    "semantic-release": "24.2.4",
+    "semantic-release": "24.2.5",
     "semantic-release-maven": "1.1.8"
   }
 }
