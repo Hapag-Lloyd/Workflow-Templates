@@ -4,10 +4,8 @@ buildx
 conventionalcommits
 cpus
 dists
-dockerhub
 doctest
 dorny
-hlag
 hmarr
 hoverkraft
 ibiqlik
