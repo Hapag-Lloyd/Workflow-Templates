@@ -35,6 +35,11 @@ on:
 jobs:
   docker-build-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
     env:
       # Use GitHub Container Registry (ghcr.io) instead of Docker Hub
       IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ inputs.image-name }}
