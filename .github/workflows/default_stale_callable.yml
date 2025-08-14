@@ -25,5 +25,6 @@ jobs:
           # yamllint enable rule:line-length
           days-before-stale: 30
           days-before-close: 10
+          exempt-pr-labels: "dependency"
           stale-issue-label: "stale"
           stale-pr-label: "stale"
