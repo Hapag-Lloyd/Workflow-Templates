@@ -5,6 +5,12 @@ name: Terraform
 on:
   # USE_WORKFLOW
   workflow_call:
+    inputs:
+      minimum-terraform-version:
+        type: string
+        required: false
+        default: "1.0.0"
+        description: "Minimum Terraform version to use for validation"
 # /USE_WORKFLOW
 # USE_REPOSITORY
 #  pull_request:
@@ -20,7 +26,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        terraform: [1.0.0, latest]
+        terraform:
+          - ${{ inputs.minimum-terraform-version }}
+          - latest
         directories: [".", "examples/cost", "examples/simple", "examples/full"]
     defaults:
       run:
