@@ -79,5 +79,8 @@ jobs:
           compose-file: "./tests/docker-compose.yml"
 
       - name: Test on ${{ matrix.python-version }}
+        env:
+          # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run
+          AWS_DEFAULT_REGION: "eu-central-1"
         run: |
           pytest -v --doctest-modules --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html
