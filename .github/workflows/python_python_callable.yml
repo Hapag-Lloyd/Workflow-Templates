@@ -109,9 +109,6 @@ jobs:
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
-      - name: set lower case image name
-        run: |
-          - echo ${{needs.build-docker.outputs.image-name}}:${{ github.sha }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
