@@ -108,13 +108,14 @@ jobs:
     if: ${{ inputs.docker-image-name != '' }} && ${{ github.event_name == 'pull_request' }}
     needs: build-docker
     runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME: ${{needs.build-docker.outputs.image-name}}
     steps:
+      - name: set lower case image name
+        run: |
+          - echo ${{needs.build-docker.outputs.image-name}}:${{ github.sha }}
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
-          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          image-ref: ${{needs.build-docker.outputs.image-name}}:${{ github.sha }}
           format: "sarif"
           output: "trivy-results.sarif"
       - name: Upload Trivy scan results to GitHub Security tab
