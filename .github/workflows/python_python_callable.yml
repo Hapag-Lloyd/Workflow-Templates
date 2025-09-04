@@ -105,7 +105,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   trivy-scan:
-    if: ${{inputs.docker-image-name != ''}} && ${{github.event_name == 'pull_request'}}
+    if: ${{ inputs.docker-image-name != '' && github.event_name == 'pull_request' }}
     needs: build-docker
     runs-on: ubuntu-latest
     steps:
