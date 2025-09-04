@@ -6,10 +6,12 @@ name: Build Java PR
 on:
   workflow_call:
 # /USE_WORKFLOW
+# yamllint disable rule:comments
 # USE_REPOSITORY
-# yamllint disable-line rule:truthy rule:comments
+## yamllint disable-line rule:truthy
 #on: pull_request
 # /USE_REPOSITORY
+# yamllint enable rule:comments
 
 jobs:
   build:
