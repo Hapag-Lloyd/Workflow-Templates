@@ -1,3 +1,4 @@
+boto
 codeowners
 infracost
 tflint
