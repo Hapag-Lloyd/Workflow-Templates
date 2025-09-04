@@ -112,7 +112,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
-          image-ref: ${{needs.build-docker.outputs.image-name}}:${{ github.sha }}
+          image-ref: ${{needs.build-docker.outputs.image-name}}:sha-${{ github.sha }}
           format: "sarif"
           output: "trivy-results.sarif"
       - name: Upload Trivy scan results to GitHub Security tab
