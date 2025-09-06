@@ -208,6 +208,8 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@40041ff1b97dbf152cd2361138c2b03fa29139df # v2.3.0
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
         with:
           compose-file: "./tests/docker-compose-api.yml"
       - name: Set up Python ${{ inputs.python-version }}
