@@ -28,7 +28,6 @@ analyzeCommits:
       - type: build
         release: false
       - type: chore
-        scope: deps
         release: patch
       - type: ci
         release: false
