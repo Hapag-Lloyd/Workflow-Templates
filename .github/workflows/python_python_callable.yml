@@ -85,7 +85,7 @@ jobs:
           tags: |
             type=ref,event=pr
             type=edge,enable={{is_default_branch}}
-            type=sha,format=long
+            type=raw,value=sha-${{ github.event.pull_request.head.sha }},enable={{is_not_default_branch}}
             type=semver,enable={{is_default_branch}},pattern={{version}}
             type=semver,enable={{is_default_branch}},pattern={{major}}.{{minor}}
             type=semver,enable={{is_default_branch}},pattern={{major}}
