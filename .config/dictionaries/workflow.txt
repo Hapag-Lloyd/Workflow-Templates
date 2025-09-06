@@ -1,7 +1,7 @@
 boto
 codeowners
 infracost
-PYTHONPATH
+pythonpath
 tflint
 tfsec
 tfstate
