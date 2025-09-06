@@ -103,6 +103,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          provenance: false
+          platforms: "linux/amd64,linux/arm64"
 
   trivy-scan:
     if: ${{ inputs.docker-image-name != '' && github.event_name == 'pull_request' }}
