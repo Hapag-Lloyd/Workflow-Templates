@@ -114,7 +114,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         with:
-          image-ref: ${{needs.build-docker.outputs.image-name}}:sha-${{ github.sha }}
+          image-ref: ${{needs.build-docker.outputs.image-name}}:sha-${{ github.event.pull_request.head.sha }}
           format: "sarif"
           output: "trivy-results.sarif"
       - name: Upload Trivy scan results to GitHub Security tab
@@ -196,14 +196,10 @@ jobs:
       - build-docker
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@40041ff1b97dbf152cd2361138c2b03fa29139df # v2.3.0
-        env:
-          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
         with:
           compose-file: "./tests/docker-compose-api.yml"
-
       - name: Set up Python ${{ inputs.python-version }}
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
         with:
@@ -213,9 +209,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install -e "."
+          python -m pip install -e ".[test]"
 
-      - name: Test on ${{ inputs.python-version }}
+      - name: API test environment is Pythom ${{ matrix.python-version }}
         env:
           # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run and the environment variable is not present
           AWS_DEFAULT_REGION: "eu-central-1"
