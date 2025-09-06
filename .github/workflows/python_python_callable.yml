@@ -158,7 +158,7 @@ jobs:
 
       - name: Test on ${{ matrix.python-version }}
         env:
-          # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run
+          # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run and the environment variable is not present
           AWS_DEFAULT_REGION: "eu-central-1"
         run: |
           pytest -v --doctest-modules --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html tests/unit/ tests/infra/
@@ -171,12 +171,14 @@ jobs:
 
       - name: Run docker-compose
         uses: hoverkraft-tech/compose-action@40041ff1b97dbf152cd2361138c2b03fa29139df # v2.3.0
+        env:
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
         with:
           compose-file: "./tests/docker-compose-api.yml"
 
       - name: Test on ${{ inputs.python-version }}
         env:
-          # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run
+          # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run and the environment variable is not present
           AWS_DEFAULT_REGION: "eu-central-1"
         run: |
           pytest -v --doctest-modules --junitxml=junit/test-results.xml --cov-report=xml --cov-report=html tests/api/
