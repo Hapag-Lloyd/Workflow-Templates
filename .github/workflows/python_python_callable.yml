@@ -223,7 +223,7 @@ jobs:
         run: |
           python -m pip install -e ".[test]"
 
-      - name: API test environment is Pythom ${{ matrix.python-version }}
+      - name: API test environment is Python ${{ matrix.python-version }}
         env:
           # for collecting the tests in pytest. If boto3 is initialized early, the fixture might not have been run and the environment variable is not present
           AWS_DEFAULT_REGION: "eu-central-1"
