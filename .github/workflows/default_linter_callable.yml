@@ -88,7 +88,7 @@ jobs:
     needs: find-changes-for-shell-output
     if: needs.find-changes-for-shell-output.outputs.workflow == 'true'
     container:
-      image: rhysd/actionlint:1.7.9@sha256:a0383f60d92601e2694e24b24d37df7b6a40bed7cedbc447611c50009bf02d94
+      image: rhysd/actionlint:1.7.10@sha256:ef8299f97635c4c30e2298f48f30763ab782a4ad2c95b744649439a039421e36
       options: --cpus 1 --user root
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
