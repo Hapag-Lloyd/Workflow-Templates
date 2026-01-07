@@ -181,7 +181,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - name: Run docker-compose
-        uses: hoverkraft-tech/compose-action@248470ecc5ed40d8ed3d4480d8260d77179ef579 # v2.4.2
+        uses: hoverkraft-tech/compose-action@05da55b2bb8a5a759d1c4732095044bd9018c050 # v2.4.3
         with:
           compose-file: "./tests/docker-compose-infra.yml"
       - name: Set up Python ${{ matrix.python-version }}
@@ -213,7 +213,7 @@ jobs:
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
       - name: Run docker-compose
-        uses: hoverkraft-tech/compose-action@248470ecc5ed40d8ed3d4480d8260d77179ef579 # v2.4.2
+        uses: hoverkraft-tech/compose-action@05da55b2bb8a5a759d1c4732095044bd9018c050 # v2.4.3
         env:
           COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
         with:
