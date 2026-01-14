@@ -28,5 +28,5 @@ jobs:
         run: |
           # install xmlstarlet for XML processing if needed
           sudo apt-get install xmlstarlet
-          
+
           mvn -B package --file pom.xml
