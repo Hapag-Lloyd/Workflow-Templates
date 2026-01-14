@@ -59,6 +59,9 @@ jobs:
           # install xmlstarlet for XML processing if needed
           sudo apt-get install xmlstarlet
 
+          # in rare cases we have to prepare something (e.g. generate whole Maven sub-modules)
+          mvn help:all-profiles | grep prepare && mvn -B package --file pom.xml -P prepare
+
           npm --prefix .release/ ci
 
       - name: Release
