@@ -55,7 +55,11 @@ jobs:
           node-version: "lts/*"
 
       - name: Install dependencies
-        run: npm --prefix .release/ ci
+        run: |
+          # install xmlstarlet for XML processing if needed
+          sudo apt-get install xmlstarlet
+          
+          npm --prefix .release/ ci
 
       - name: Release
         run: npx --prefix .release/ semantic-release
