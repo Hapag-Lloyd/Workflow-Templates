@@ -113,11 +113,11 @@ function ensure_and_set_parameters_or_exit() {
 
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-    if [ "${#POSITIONAL_ARGS[@]}" -ne 2 ]; then
+    if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
     show_help_and_exit
   fi
 
-  repository_path=$2
+  repository_path=$1
 }
 
 function setup_cspell() {
