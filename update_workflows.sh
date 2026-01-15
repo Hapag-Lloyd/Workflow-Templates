@@ -4,8 +4,6 @@ set -euo pipefail
 
 init_mode="false"
 repository_type=""
-release_type="auto"
-force_execution="false"
 repository_path=$(pwd)
 dry_run="false"
 
@@ -31,7 +29,7 @@ function ensure_prerequisites_or_exit() {
 }
 
 function ensure_repo_preconditions_or_exit() {
-  if [ "$force_execution" == "true" ]; then
+  if [ "$init_mode" == "true" ]; then
     return
   fi
 
@@ -61,13 +59,14 @@ function create_commit_and_pr() {
   workflow_tag=$1
 
   git add .
-  git commit -m "update workflows to latest version"
-  git push --set-upstream origin "$branch_name"
+  # use --no-verify to skip pre-commit hooks as they might fail. Checks are done in the workflows anyway.
+  git commit -m "update workflows to $workflow_tag" --no-verify
+  git push origin HEAD
 
   body=$(cat <<EOF
 # Description
 
-This PR updates all workflows to the latest version.
+This PR updates all workflows to version $workflow_tag.
 
 # Verification
 
@@ -90,10 +89,6 @@ function ensure_and_set_parameters_or_exit() {
     case $1 in
       --dry-run)
         dry_run="true"
-        shift
-        ;;
-      -f|--force)
-        force_execution="true"
         shift
         ;;
       --init)
@@ -197,6 +192,7 @@ function fetch_and_validate_configuration_from_file_or_exit() {
 
 ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
+ensure_config_file_or_create_dummy_in_new_branch_and_exit
 ensure_repo_preconditions_or_exit
 
 latest_template_path=$(dirname "$0")
@@ -204,7 +200,6 @@ latest_template_path=$(dirname "$0")
 cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
-ensure_config_file_or_create_dummy_in_new_branch_and_exit
 fetch_and_validate_configuration_from_file_or_exit
 
 # in init mode, we create a new branch from main already as we created the initial config file
