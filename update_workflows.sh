@@ -5,7 +5,7 @@ set -euo pipefail
 init_mode="false"
 repository_type=""
 repository_path=$(pwd)
-dry_run="false"
+skip_pr="false"
 
 CONFIG_FILE=".config/workflow.yml"
 
@@ -38,12 +38,6 @@ function ensure_repo_preconditions_or_exit() {
     echo "The working directory is not clean. Please use a clean copy so no unintended changes are merged."
     exit 1
   fi
-
-  # ensure top level directory of the repository
-  if [ ! -d .github ]; then
-    echo "The script must be executed from the top level directory of the repository."
-    exit 1
-  fi
 }
 
 function show_help_and_exit() {
@@ -74,7 +68,7 @@ Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
-  if [ "$dry_run" == "true" ]; then
+  if [ "$skip_pr" == "true" ]; then
     echo "No PR created, but the changes were committed and pushed."
   else
     gh pr create --title "ci(deps): update workflows to $workflow_tag" --body "$body" --base main
@@ -87,8 +81,8 @@ function ensure_and_set_parameters_or_exit() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
-      --dry-run)
-        dry_run="true"
+      --skip-pr)
+        skip_pr="true"
         shift
         ;;
       --init)
@@ -108,7 +102,7 @@ function ensure_and_set_parameters_or_exit() {
 
   set -- "${POSITIONAL_ARGS[@]}" # restore positional parameters
 
-    if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
+  if [ "${#POSITIONAL_ARGS[@]}" -ne 1 ]; then
     show_help_and_exit
   fi
 
@@ -188,6 +182,16 @@ function fetch_and_validate_configuration_from_file_or_exit() {
     echo "The release type 'manual' is supported for terraform_module repositories only."
     exit 3
   fi
+}
+
+function setup_renovate() {
+  echo "Setting up Renovate configuration"
+  cat > .github/renovate.json5 <<-EOF
+{
+  \$schema: "https://docs.renovatebot.com/renovate-schema.json",
+  extends: ["github>Hapag-Lloyd/Renovate-Global-Configuration"],
+}
+EOF
 }
 
 ensure_and_set_parameters_or_exit "$@"
@@ -398,9 +402,7 @@ do
   done
 done
 
-# remove unnecessary files
-rm -f renovate.json
-rm -f .github/update_workflows.sh
+setup_renovate
 
 pre-commit install -c .config/.pre-commit-config.yaml
 

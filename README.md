@@ -4,26 +4,19 @@ This repository stores templates used to set up workflows for new repositories.
 
 ## Set up a new repository
 
-```bash
-git clone https://github.com/Hapag-Lloyd/Workflow-Templates.git workflow-templates
-./update_workflows.sh <type> <path-to-new-repository>
-```
-
-Search for `TODO` in the copied files and replace the placeholders with the correct values. The same script can be used to update
-all files in case of major changes in the templates.
+1. Copy the [update_workflows_user.sh](./update_workflows_user.sh) script to your new repository.
+2. Execute the script in your repository.
+3. Store the correct workflow settings in `.config/workflow.yml`:
+4. Rerun the script with `--init` option.
+5. Search for `TODO` in the copied files and replace the placeholders with the correct values.
+6. Check the PR which was automatically created by the script and merge it.
 
 ## Update existing repositories
 
-```bash
-  cd <path-to-this-repository>
-  git checkout main
-  git pull
+1. Execute `.github/update_workflows.sh` in the repository you want to update.
+2. Check the PR which was automatically created by the script and merge it.
 
-  ./update_workflows.sh <repository-type> <repository-path> --release-type auto|manual --dry-run --use-existing-branch
-```
-
-Use without `--dry-run` to apply the changes and create a pull request. `--use-existing-branch` is useful to update a Renovate MR.
-Make sure to checkout the branch first.
+Invoke the script with --skip-pr to see the changes but without creating a PR.
 
 ## What you get
 
