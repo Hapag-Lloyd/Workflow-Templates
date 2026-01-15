@@ -26,7 +26,7 @@ git init --initial-branch main "$path"
   git checkout main
 )
 
-./update_workflows.sh terraform_module --force --dry-run "$path"
+./update_workflows.sh terraform_module --force --skip-pr "$path"
 
 echo "Creating the word list file"
 

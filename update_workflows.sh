@@ -38,6 +38,7 @@ init_mode="false"
 repository_type=""
 repository_path=$(pwd)
 skip_pr="false"
+force_execution="false"
 
 CONFIG_FILE=".config/workflow.yml"
 
@@ -66,7 +67,7 @@ function ensure_prerequisites_or_exit() {
 }
 
 function ensure_repo_preconditions_or_exit() {
-  if [ "$init_mode" == "true" ]; then
+  if [ "$init_mode" == "true" ] || [ "$force_execution" == "true" ]; then
     return
   fi
 
@@ -79,10 +80,12 @@ function ensure_repo_preconditions_or_exit() {
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 --dry-run <repository-path>"
+  echo "Usage: $0 --dry-run --init --force <repository-path>"
 
   echo "repository-path: the path to the repository to update"
   echo "--dry-run: (optional) do not create a PR"
+  echo "--init: (optional) create an initial configuration file if not present"
+  echo "--force: (optional) force execution even if the working directory is not clean"
 
   exit 1
 }

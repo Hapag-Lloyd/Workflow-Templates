@@ -30,6 +30,7 @@ Invoke the script with --skip-pr to see the changes but without creating a PR.
 - PRs are checked for semantic commit titles to ensure an automatic release
 - ChatOps to run workflows from comments
 - a `.config/dictionaries/project.txt` file for the spell checker exceptions
+- Renovate setup with Hapag-Lloyd specific presets
 
 ## For Developers - Repository Layout
 
@@ -40,6 +41,9 @@ Invoke the script with --skip-pr to see the changes but without creating a PR.
 The script to set up the workflows for new repositories is `./update_workflows.sh`. It copies the necessary files to the new
 repository. It starts with the default workflows and adds the specific ones based on the project type. In case of a filename clash,
 the specific template overwrites the default one (exception: `.gitignore` These files are concatenated).
+
+The script `./update_workflows_user.sh` is copied to `.github/update_workflows.sh` and executed in the repository by the user. It
+simply clones this repository and calls the main script with the correct parameters.
 
 Use
 
