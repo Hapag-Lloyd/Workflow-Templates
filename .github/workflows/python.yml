@@ -1,0 +1,45 @@
+---
+name: Python build
+
+#
+# Global variables from project settings:
+#   PYTHON_VERSION: The minimum Python version to support.
+#   PYTHON_VERSIONS: The Python versions to test. Usually a list of newer versions we support.
+#
+
+# yamllint disable-line rule:truthy
+on: pull_request
+# yamllint enable rule:comments
+
+permissions:
+  contents: read
+
+jobs:
+  default:
+    # yamllint disable-line rule:line-length
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/python_python_callable.yml@5c9ed2712cf4a213138df8ab92f4e1384712784a # 1.25.8
+    secrets: inherit
+    with:
+      # type: string
+      # required: true
+      # description: The minimum Python version to support
+      python-version: ${{ vars.PYTHON_VERSION }}
+      # type: string
+      # required: true
+      # description: The Python versions to test. Usually a list of newer versions we support.
+      python-versions: ${{ vars.PYTHON_VERSIONS }}
+      # TODO insert correct value for docker-image-name
+      # type: string
+      # required: false
+      # description: Name of the image. Usually it is sensible to set this to the repository name.
+      docker-image-name: "my special value"
+      # TODO insert correct value for docker-platforms
+      # type: string
+      # required: false
+      # description: Platforms to build the docker image for
+      docker-platforms: "my special value"
+      # TODO insert correct value for docker-provenance
+      # type: boolean
+      # required: false
+      # description: Enable Docker image provenance
+      docker-provenance: "my special value"
