@@ -58,7 +58,10 @@ Use
 in the file to describe the triggers which should be used in the repository. The script will automatically replace the triggers
 marked with `USE_WORKFLOW` which are valid within this repository only.
 
-Make sure that this block is well formatted, otherwise the update script will fail in the related repository due to prettier.
+### Dictionary Update
+
+- use `workflow.txt` for words used in files copied from this repository
+- use `project.txt` for project specific words used in this repository only
 
 ### Simulate the update
 

@@ -230,6 +230,7 @@ EOF
     log_error "Please review and adjust the configuration as needed, then re-run the script with the '--init' option."
     exit 2
   fi
+
   log_success "Configuration file found: $CONFIG_FILE"
 }
 
@@ -267,15 +268,16 @@ EOF
 
 ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
-ensure_config_file_or_create_dummy_in_new_branch_and_exit
 ensure_repo_preconditions_or_exit
 
-latest_template_path=$(dirname "$0")
+# to get rid of "." and windows paths
+latest_template_path=$(cd "$(dirname "$0")" && pwd)
 
 log_section "Starting Workflow Update"
 log_info "Updating the workflows in $repository_path"
 cd "$repository_path" || exit 8
 
+ensure_config_file_or_create_dummy_in_new_branch_and_exit
 fetch_and_validate_configuration_from_file_or_exit
 
 # in init mode, we create a new branch from main already as we created the initial config file
@@ -296,6 +298,7 @@ log_info "Creating workflow directories..."
 mkdir -p ".github/workflows/scripts"
 
 log_info "Copying default workflow templates..."
+
 cp "$latest_template_path/.github/workflows/default"_* .github/workflows/
 cp "$latest_template_path/.github/workflows/scripts/"* .github/workflows/scripts/
 
