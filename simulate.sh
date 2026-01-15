@@ -11,8 +11,10 @@ echo "Creating the remote repository in $path_origin"
   git init --initial-branch main "$path_origin"
 
   cd "$path_origin"
+
   touch README.md
   git add README.md
+
   git commit -m "xxx"
 )
 
@@ -26,7 +28,9 @@ git init --initial-branch main "$path"
   git checkout main
 )
 
-./update_workflows.sh terraform_module --force --dry-run "$path"
+# creates the dummy config file, but fails as the user has to check it in manually
+./update_workflows.sh --force "$path" || true
+./update_workflows.sh --force --skip-pr --init "$path"
 
 echo "Creating the word list file"
 
