@@ -132,6 +132,11 @@ function ensure_and_set_parameters_or_exit() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
+      --force)
+        force_execution="true"
+        log_info "Force execution enabled"
+        shift
+        ;;
       --skip-pr)
         skip_pr="true"
         log_info "Skip PR mode enabled"
