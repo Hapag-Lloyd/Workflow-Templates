@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
+
 set -euo pipefail
 
+init_mode="false"
 repository_type=""
 release_type="auto"
 force_execution="false"
 repository_path=$(pwd)
 dry_run="false"
-use_existing_branch="false"
+
+CONFIG_FILE=".config/workflow.yml"
 
 branch_name="update-workflows-$(date +%s)"
 
@@ -46,13 +49,9 @@ function ensure_repo_preconditions_or_exit() {
 }
 
 function show_help_and_exit() {
-  echo "Usage: $0 <repository-type> <repository-path> --release-type auto|manual --dry-run --use-existing-branch"
-  echo "repository-type: docker, github-only, maven, python, terraform_module"
+  echo "Usage: $0 --dry-run <repository-path>"
+
   echo "repository-path: the path to the repository to update"
-  echo "--release-type: (optional)"
-  echo "  auto: the release will be triggered automatically on a push to the default branch"
-  echo "  manual: the release will be triggered manually via separate PR, which is created automatically"
-  echo "--use-existing-branch: (optional) use the existing branch instead of creating a new one"
   echo "--dry-run: (optional) do not create a PR"
 
   exit 1
@@ -76,7 +75,7 @@ Done by the workflows in this feature branch, except for the release workflow.
 EOF
   )
 
-  if [ "$dry_run" == "true" ] || [ "$use_existing_branch" == "true" ]; then
+  if [ "$dry_run" == "true" ]; then
     echo "No PR created, but the changes were committed and pushed."
   else
     gh pr create --title "ci(deps): update workflows to $workflow_tag" --body "$body" --base main
@@ -97,13 +96,8 @@ function ensure_and_set_parameters_or_exit() {
         force_execution="true"
         shift
         ;;
-      --release-type)
-        release_type=$2
-        shift
-        shift
-        ;;
-      --use-existing-branch)
-        use_existing_branch="true"
+      --init)
+        init_mode="true"
         shift
         ;;
       --*|-*)
@@ -123,19 +117,7 @@ function ensure_and_set_parameters_or_exit() {
     show_help_and_exit
   fi
 
-  repository_type=$1
   repository_path=$2
-
-  # check for correct type: docker, github-only, maven, terraform_module
-  if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ] && [ "$repository_type" != "python" ]; then
-    echo "The repository type $repository_type is not supported."
-    show_help_and_exit
-  fi
-
-  if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual" ]; then
-    echo "The release type 'manual' is only supported for terraform_module repositories."
-    show_help_and_exit
-  fi
 }
 
 function setup_cspell() {
@@ -176,16 +158,57 @@ function setup_cspell() {
   fi
 }
 
+function ensure_config_file_or_create_dummy_in_new_branch_and_exit() {
+  if [ ! -f "$CONFIG_FILE" ]; then
+    git fetch origin main
+    git checkout -b "$branch_name" origin/main
+
+    echo "The configuration file $CONFIG_FILE does not exist."
+    echo "A dummy file has been created."
+    echo "Please review and adjust the configuration as needed, then re-run the script and add the '--init' option."
+    mkdir -p .config
+    cat > "$CONFIG_FILE" <<-EOF
+---
+# configuration for workflow automation from https://github.com/HapagLloyd/workflow-templates
+repository:
+  type: github-only # docker, github-only, maven, python, terraform_module
+  release: auto # auto, manual
+EOF
+
+    exit 2
+  fi
+}
+
+function fetch_and_validate_configuration_from_file_or_exit() {
+  repository_type=$(yq e '.repository.type' "$CONFIG_FILE")
+  release_type=$(yq e '.repository.release' "$CONFIG_FILE")
+
+  if [ "$repository_type" != "github-only" ] && [ "$repository_type" != "maven" ] && [ "$repository_type" != "terraform_module" ] && [ "$repository_type" != "docker" ] && [ "$repository_type" != "python" ]; then
+    echo "The repository type $repository_type is not supported."
+    echo "Supported types are: docker, github-only, maven, python, terraform_module"
+    exit 3
+  fi
+
+  if [ "$repository_type" != "terraform_module" ] && [ "$release_type" == "manual" ]; then
+    echo "The release type 'manual' is supported for terraform_module repositories only."
+    exit 3
+  fi
+}
+
 ensure_and_set_parameters_or_exit "$@"
 ensure_prerequisites_or_exit
 ensure_repo_preconditions_or_exit
 
-latest_template_path=$(pwd)
+latest_template_path=$(dirname "$0")
 
 cd "$repository_path" || exit 8
 echo "Updating the workflows in $repository_path"
 
-if [ "$use_existing_branch" == "false" ]; then
+ensure_config_file_or_create_dummy_in_new_branch_and_exit
+fetch_and_validate_configuration_from_file_or_exit
+
+# in init mode, we create a new branch from main already as we created the initial config file
+if [ "$init_mode" == "false" ]; then
   git fetch origin main
   git checkout -b "$branch_name" origin/main
 fi
@@ -203,6 +226,7 @@ cp "$latest_template_path/.github/pull_request_template.md" .github/
 cp "$latest_template_path/.github/CODE_OF_CONDUCT.md" .github/
 cp "$latest_template_path/.github/CONTRIBUTING.md" .github/
 cp "$latest_template_path/.github/renovate.json5" .github/
+cp "$latest_template_path/update_workflows_user.sh" .github/update_workflows.sh
 
 git ls-files --modified -z .github/workflows/scripts/ .github/update_workflows.sh | xargs -0 -I {} git update-index --chmod=+x {}
 git ls-files -z -o --exclude-standard | xargs -0 -I {} git update-index --add --chmod=+x {}
