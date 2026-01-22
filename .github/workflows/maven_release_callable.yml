@@ -5,6 +5,12 @@ name: Release
 on:
   # USE_WORKFLOW
   workflow_call:
+    inputs:
+      skip-maven-publish:
+        type: boolean
+        required: false
+        description: "Flag to skip the publishing to Maven Central"
+        default: false
     secrets:
       SEMANTIC_RELEASE_GH_TOKEN:
         required: true
@@ -57,7 +63,7 @@ jobs:
       - name: Install dependencies
         run: |
           # install xmlstarlet for XML processing if needed
-          sudo apt-get install xmlstarlet
+          sudo apt-get install xmlstarlet yq
 
           # in rare cases we have to prepare something (e.g. generate whole Maven sub-modules)
           mvn help:all-profiles | grep prepare && mvn -B package --file pom.xml -P prepare -D maven.main.skip=true
@@ -65,7 +71,15 @@ jobs:
           npm --prefix .release/ ci
 
       - name: Release
-        run: npx --prefix .release/ semantic-release
+        run: |
+          if [ "${{ inputs.skip-maven-publish }}" = "true" ]; then
+            # remove the Maven release plugin from the publishing process
+            yq eval 'del(.publish[] | select(.path == "semantic-release-maven"))' -i .release/.releaserc.yml
+
+            echo "No publishing to Maven due to skip-release=true"
+          fi
+
+          npx --prefix .release/ semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.SEMANTIC_RELEASE_GH_TOKEN }}
           SERVER_USERNAME: ${{ secrets.OSSRH_USERNAME }}
