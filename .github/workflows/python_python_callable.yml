@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: astral-sh/ruff-action@57714a7c8a2e59f32539362ba31877a1957dded1 # v3.5.1
+      - uses: astral-sh/ruff-action@aedff8d295e5eafdfcc21db7dfdce8cab2c55e7b # v3.6.0
         name: Lint on ${{ inputs.python-version }}
         with:
           args: "check"
