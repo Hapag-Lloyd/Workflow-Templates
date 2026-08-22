@@ -6,5 +6,5 @@ on: pull_request_target
 
 jobs:
   default:
-    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_renovate_auto_approve_callable.yml@main
+    uses: Hapag-Lloyd/Workflow-Templates/.github/workflows/default_renovate_auto_approve_callable.yml@99c1c2f42731c6a1cd24507e3b262ea77597f053 # main
     secrets: inherit
